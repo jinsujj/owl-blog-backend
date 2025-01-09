@@ -50,7 +50,7 @@ public class LoggingAspect {
       log.info("No arguments provided");
     }
 
-    Object result = null;
+    Object result;
     try{
       result = joinPoint.proceed();
     }
