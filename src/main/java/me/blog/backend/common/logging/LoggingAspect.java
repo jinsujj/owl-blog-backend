@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 public class LoggingAspect {
-  private ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper;
 
   public LoggingAspect() {
     objectMapper = new ObjectMapper();
