@@ -27,10 +27,7 @@ public class BlogEntity {
   private Long id;
   private String title;
   private String content;
-
-  @ElementCollection
-  @CollectionTable(name ="blog_attachments", joinColumns = @JoinColumn(name ="blog_id"))
-  private List<String> attachments;
+  private int readCount;
 
   @Column(name = "created_at")
   private LocalDateTime createdAt;
@@ -39,8 +36,7 @@ public class BlogEntity {
   @Column(name= "published_at", nullable = true)
   private LocalDateTime publishedAt;
 
-
- public boolean isPublished() {
+  public boolean isPublished() {
     return publishedAt != null && publishedAt.isBefore(LocalDateTime.now());
   }
 
@@ -53,12 +49,27 @@ public class BlogEntity {
     this.publishedAt = null;
     this.updatedAt = LocalDateTime.now();
   }
-  public BlogEntity(String title, String content, List<String> attachments, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime publishedAt) {
+
+  public void readCounting(){
+    this.readCount++;
+  }
+
+  public BlogEntity(String title, String content, int readCount, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime publishedAt) {
     this.title = title;
     this.content = content;
-    this.attachments = attachments;
+    this.readCount = readCount;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.publishedAt = publishedAt;
   }
+
+  public BlogEntity(String title, String content, LocalDateTime createdAt){
+   this.title = title;
+   this.content = content;
+   this.readCount = 0;
+   this.createdAt = createdAt;
+   this.updatedAt = null;
+   this.publishedAt = null;
+  }
+
 }

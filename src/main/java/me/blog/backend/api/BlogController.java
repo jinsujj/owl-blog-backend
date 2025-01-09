@@ -1,5 +1,6 @@
 package me.blog.backend.api;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,14 +25,14 @@ public class BlogController {
   }
 
   @PostMapping
-  public ResponseEntity<BlogVO> createBlog(@RequestBody BlogVO blogRequest) {
-    BlogVO blog = blogService.createBlog(blogRequest.title(), blogRequest.content(), blogRequest.attachments());
+  public ResponseEntity<BlogVO> createBlog(@RequestBody BlogRequest blogRequest) {
+    BlogVO blog = blogService.createBlog(blogRequest.title(), blogRequest.content());
     return ResponseEntity.ok(blog);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<BlogVO> updateBlog(@PathVariable Long id, @RequestBody BlogVO blogRequest) {
-    BlogVO updatedBlog = blogService.updateBlog(id, blogRequest.title(), blogRequest.content(), blogRequest.attachments());
+  public ResponseEntity<BlogVO> updateBlog(@PathVariable Long id, @RequestBody BlogRequest blogRequest) {
+    BlogVO updatedBlog = blogService.updateBlog(id, blogRequest.title(), blogRequest.content());
     return ResponseEntity.ok(updatedBlog);
   }
 
@@ -48,12 +49,25 @@ public class BlogController {
   }
 
   @GetMapping
-  public ResponseEntity<List<BlogVO>> getAllBlogs() {
-    return ResponseEntity.ok(blogService.getAllBlogs());
+  public ResponseEntity<List<BlogSummary>> getAllBlogs() {
+    List<BlogSummary> simplifiedBlogs = blogService.getAllBlogs().stream()
+        .map(blog -> new BlogSummary(
+            blog.id(),
+            blog.title(),
+            blog.readCount(),
+            blog.createdAt(),
+            blog.publishedAt()
+        )).toList();
+
+    return ResponseEntity.ok(simplifiedBlogs);
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<BlogVO> getBlogById(@PathVariable Long id) {
     return ResponseEntity.ok(blogService.getBlogById(id));
   }
+
+  public record BlogRequest(String title, String content) {}
+
+  public record BlogSummary(Long id, String title, int readCount, LocalDateTime createdAt, LocalDateTime publishedAt) {}
 }

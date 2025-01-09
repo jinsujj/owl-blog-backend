@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import me.blog.backend.common.exception.BlogNotFoundException;
+
 @Service
 public class BlogService {
   private final BlogRepository blogRepository;
@@ -15,37 +17,41 @@ public class BlogService {
   }
 
   @Transactional
-  public BlogVO createBlog(String title, String content, List<String> attachments){
-    BlogEntity blog = new BlogEntity(title, content, attachments, null, null,null);
-    return BlogVO.fromEntity(blog);
+  public BlogVO createBlog(String title, String content){
+    BlogEntity blog = new BlogEntity(title, content, LocalDateTime.now());
+    return BlogVO.fromEntity(blogRepository.save(blog));
   }
 
   @Transactional
-  public BlogVO updateBlog(Long id, String newTitle, String newContent, List<String> newAttachments) {
+  public BlogVO updateBlog(Long id, String newTitle, String newContent) {
     BlogEntity blogEntity = blogRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Blog not found"));
+        .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
     blogEntity.setTitle(newTitle);
     blogEntity.setContent(newContent);
-    blogEntity.setAttachments(newAttachments);
     blogEntity.setUpdatedAt(LocalDateTime.now());
     return BlogVO.fromEntity(blogRepository.save(blogEntity));
   }
 
   @Transactional(readOnly = true)
   public List<BlogVO> getAllBlogs() {
-    return blogRepository.findAll().stream().map(BlogVO::fromEntity).collect(Collectors.toList());
+    return blogRepository.findAll().stream()
+        .map(BlogVO::fromEntity).collect(Collectors.toList());
   }
 
-  @Transactional(readOnly = true)
+  @Transactional
   public BlogVO getBlogById(Long id) {
-    return BlogVO.fromEntity(blogRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Blog not found")));
+    BlogEntity blogEntity = blogRepository.findById(id)
+        .filter(BlogEntity::isPublished)
+        .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
+
+    blogEntity.readCounting();
+    return BlogVO.fromEntity(blogEntity);
   }
 
   @Transactional
   public BlogVO publishBlog(Long id){
    BlogEntity blog = blogRepository.findById(id)
-       .orElseThrow(() -> new RuntimeException("Blog not found"));
+       .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
 
    blog.publish();
    return BlogVO.fromEntity(blogRepository.save(blog));
@@ -54,7 +60,7 @@ public class BlogService {
   @Transactional
   public BlogVO unPublishBlog(Long id){
    BlogEntity blog = blogRepository.findById(id)
-       .orElseThrow(() -> new RuntimeException("Blog not found"));
+       .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
 
    blog.unpublish();
    return BlogVO.fromEntity(blogRepository.save(blog));
