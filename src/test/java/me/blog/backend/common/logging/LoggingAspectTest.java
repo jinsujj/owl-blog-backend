@@ -34,7 +34,7 @@ class LoggingAspectTest {
   }
 
   @Test
-  public void testLogAround_withArguments() throws Throwable {
+  public void test_logAround_with_arguments() throws Throwable {
     // given
     when(joinPoint.getSignature().getDeclaringTypeName()).thenReturn("me.blog.backend.api.SampleObject");
     when(joinPoint.getSignature().getName()).thenReturn("sampleMethod");
@@ -52,7 +52,7 @@ class LoggingAspectTest {
 
 
   @Test
-  public void testLogAround_withException() throws Throwable {
+  public void test_logAround_with_exception() throws Throwable {
     // given
     when(joinPoint.getSignature().getDeclaringTypeName()).thenReturn("me.blog.backend.api.SampleController");
     when(joinPoint.getSignature().getName()).thenReturn("sampleMethod");
@@ -70,7 +70,7 @@ class LoggingAspectTest {
 
 
   @Test
-  public void testToJson_withValidObject(){
+  public void test_toJson_with_valid_object(){
     // given
     SampleObject sampleObject = new SampleObject("value1", 123);
 
@@ -84,7 +84,7 @@ class LoggingAspectTest {
   }
 
   @Test
-  public void testToJson_withInvalidObject() {
+  public void test_ToJson_with_invalid_object() {
     // Given
     Object invalidObject = new Object();
 

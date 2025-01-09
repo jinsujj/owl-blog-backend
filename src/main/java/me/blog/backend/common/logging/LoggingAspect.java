@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 public class LoggingAspect {
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private ObjectMapper objectMapper = new ObjectMapper();
+
+  public LoggingAspect() {
+    objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+  }
 
   // api layer logging
   @Pointcut("execution(* me.blog.backend.api..*(..))")
@@ -55,10 +61,11 @@ public class LoggingAspect {
 
     long elapsedTime = System.currentTimeMillis() - start;
 
-    log.info("End Method: {}.{} wtih result={}, execution time={} ms",
+    log.info("End Method: {}.{} [execution time={} ms] result={}",
         joinPoint.getSignature().getDeclaringTypeName(),
         joinPoint.getSignature().getName(),
-        toJson(result),elapsedTime);
+        elapsedTime,
+        toJson(result));
 
     return result;
   }
