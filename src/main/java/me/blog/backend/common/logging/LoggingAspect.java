@@ -34,19 +34,20 @@ public class LoggingAspect {
     long start = System.currentTimeMillis();
 
     // Method name and Class info
-    log.info("Start Method: {}.{}", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
+    log.info("Start Method: {}.{}",
+        joinPoint.getSignature().getDeclaringTypeName(),
+        joinPoint.getSignature().getName());
 
     // Arguments info
     Object[] args = joinPoint.getArgs();
-    if(args.length > 0){
-      StringBuilder params = new StringBuilder("Arguments: \n");
-      for(int i =0; i < args.length; i++){
-        params.append(" [").append(i).append("]: ")
-            .append(args[i] != null ? toJson(args[i]) : "null")
-            .append("\n");
+    if (args.length > 0) {
+      StringBuilder params = new StringBuilder("Arguments:");
+      for (int i = 0; i < args.length; i++) {
+        params.append("\n [").append(i).append("]: ")
+            .append(args[i] != null ? toJson(args[i]) : "null");
       }
       log.info(params.toString());
-    } else{
+    } else {
       log.info("No arguments provided");
     }
 
@@ -61,7 +62,7 @@ public class LoggingAspect {
 
     long elapsedTime = System.currentTimeMillis() - start;
 
-    log.info("End Method: {}.{} [execution time={} ms] result={}",
+    log.info("End Method: {}.{} [execution time={} ms] result={} \n",
         joinPoint.getSignature().getDeclaringTypeName(),
         joinPoint.getSignature().getName(),
         elapsedTime,
