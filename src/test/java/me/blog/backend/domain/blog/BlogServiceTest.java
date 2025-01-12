@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import me.blog.backend.common.exception.BlogNotFoundException;
+import me.blog.backend.domain.blog.entitiy.BlogEntity;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -38,7 +39,7 @@ class BlogServiceTest {
     when(blogRepository.save(any(BlogEntity.class))).thenReturn(blogEntity);
 
     // when
-    BlogVO result = blogService.createBlog(title, content);
+    BlogVO result = blogService.postBlog(title, content);
 
     // then
     assertNotNull(result);

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import me.blog.backend.common.exception.BlogNotFoundException;
+import me.blog.backend.domain.blog.entitiy.BlogEntity;
 
 @Service
 public class BlogService {
@@ -17,7 +18,7 @@ public class BlogService {
   }
 
   @Transactional
-  public BlogVO createBlog(String title, String content){
+  public BlogVO postBlog(String title, String content){
     BlogEntity blog = new BlogEntity(title, content, LocalDateTime.now());
     return BlogVO.fromEntity(blogRepository.save(blog));
   }

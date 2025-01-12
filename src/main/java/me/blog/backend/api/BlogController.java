@@ -25,8 +25,8 @@ public class BlogController {
   }
 
   @PostMapping
-  public ResponseEntity<BlogVO> createBlog(@RequestBody BlogRequest blogRequest) {
-    BlogVO blog = blogService.createBlog(blogRequest.title(), blogRequest.content());
+  public ResponseEntity<BlogVO> postBlog(@RequestBody BlogRequest blogRequest) {
+    BlogVO blog = blogService.postBlog(blogRequest.title(), blogRequest.content());
     return ResponseEntity.ok(blog);
   }
 
