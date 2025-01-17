@@ -53,15 +53,17 @@ public class BlogController {
     return ResponseEntity.ok(blog);
   }
 
-  @GetMapping
+  @GetMapping("/summary")
   public ResponseEntity<List<BlogSummary>> getAllBlogs() {
     List<BlogSummary> simplifiedBlogs = blogService.getAllBlogs().stream()
         .map(blog -> new BlogSummary(
             blog.id(),
             blog.title(),
+            blog.summary(),
             blog.readCount(),
             blog.createdAt(),
-            blog.publishedAt()
+            blog.publishedAt(),
+            blog.tags()
         )).toList();
 
     return ResponseEntity.ok(simplifiedBlogs);
@@ -74,5 +76,5 @@ public class BlogController {
 
   public record BlogRequest(String title, String content, List<TagVO> tags) {}
 
-  public record BlogSummary(Long id, String title, int readCount, LocalDateTime createdAt, LocalDateTime publishedAt) {}
+  public record BlogSummary(Long id, String title, String summary, int readCount, LocalDateTime createdAt, LocalDateTime publishedAt, TagVO[] tags) {}
 }
