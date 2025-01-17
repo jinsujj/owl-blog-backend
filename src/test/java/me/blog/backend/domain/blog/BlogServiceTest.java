@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -12,7 +13,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import me.blog.backend.common.exception.BlogNotFoundException;
-import me.blog.backend.domain.blog.entitiy.BlogEntity;
+import me.blog.backend.domain.blog.entity.BlogEntity;
+import me.blog.backend.domain.blog.repository.BlogRepository;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;

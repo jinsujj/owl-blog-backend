@@ -3,11 +3,13 @@ package me.blog.backend.domain.blog;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import me.blog.backend.common.exception.BlogNotFoundException;
-import me.blog.backend.domain.blog.entitiy.BlogEntity;
+import me.blog.backend.domain.blog.entity.BlogEntity;
+import me.blog.backend.domain.blog.repository.BlogRepository;
 
 @Service
 public class BlogService {

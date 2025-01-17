@@ -1,11 +1,9 @@
-package me.blog.backend.domain.blog.entitiy;
+package me.blog.backend.domain.blog.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,23 +12,19 @@ import lombok.Setter;
 
 @Entity
 @Getter @Setter
-@Table(name = "blog_tag")
+@Table(name = "tag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BlogTagEntity {
+public class TagEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @ManyToOne
-  @JoinColumn(name ="blog_id", nullable = false)
-  private BlogEntity blog;
+	private String name;
 
-  @ManyToOne
-  @JoinColumn(name ="tag_id", nullable = false)
-  private TagEntity tag;
+  private String label;
 
-  public BlogTagEntity(BlogEntity blog, TagEntity tag) {
-    this.blog = blog;
-    this.tag = tag;
+  public TagEntity(String name,String label) {
+		this.name = name;
+    this.label = label;
   }
 }

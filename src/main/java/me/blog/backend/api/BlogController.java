@@ -13,20 +13,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.blog.backend.domain.blog.BlogService;
 import me.blog.backend.domain.blog.BlogVO;
-
+import me.blog.backend.domain.blog.TagService;
+import me.blog.backend.domain.blog.TagVO;
 
 @RestController
 @RequestMapping("/blogs")
 public class BlogController {
   private final BlogService blogService;
+  private final TagService tagService;
 
-  public BlogController(BlogService blogService) {
+  public BlogController(BlogService blogService, TagService tagService) {
     this.blogService = blogService;
+    this.tagService = tagService;
   }
 
   @PostMapping
   public ResponseEntity<BlogVO> postBlog(@RequestBody BlogRequest blogRequest) {
     BlogVO blog = blogService.postBlog(blogRequest.title(), blogRequest.content());
+    tagService.postTags(blogRequest.tags, blog.id());
+
     return ResponseEntity.ok(blog);
   }
 
@@ -67,7 +72,7 @@ public class BlogController {
     return ResponseEntity.ok(blogService.getBlogById(id));
   }
 
-  public record BlogRequest(String title, String content) {}
+  public record BlogRequest(String title, String content, List<TagVO> tags) {}
 
   public record BlogSummary(Long id, String title, int readCount, LocalDateTime createdAt, LocalDateTime publishedAt) {}
 }
