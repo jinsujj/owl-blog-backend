@@ -1,7 +1,6 @@
-package me.blog.backend.domain.blog.VO;
+package me.blog.backend.domain.blog.vo;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 import me.blog.backend.domain.blog.entity.BlogEntity;

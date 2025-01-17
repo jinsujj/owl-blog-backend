@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import me.blog.backend.common.exception.BlogNotFoundException;
-import me.blog.backend.domain.blog.VO.BlogVO;
+import me.blog.backend.domain.blog.vo.BlogVO;
 import me.blog.backend.domain.blog.entity.BlogEntity;
 import me.blog.backend.domain.blog.repository.BlogRepository;
 

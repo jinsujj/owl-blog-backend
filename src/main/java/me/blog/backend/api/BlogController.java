@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.blog.backend.domain.blog.service.BlogService;
-import me.blog.backend.domain.blog.VO.BlogVO;
-import me.blog.backend.domain.blog.VO.TagVO;
+import me.blog.backend.domain.blog.vo.BlogVO;
+import me.blog.backend.domain.blog.vo.TagVO;
 import me.blog.backend.domain.blog.service.TagService;
 
 @RestController
