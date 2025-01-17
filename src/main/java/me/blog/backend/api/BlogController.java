@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.blog.backend.domain.blog.BlogService;
-import me.blog.backend.domain.blog.BlogVO;
-import me.blog.backend.domain.blog.TagService;
-import me.blog.backend.domain.blog.TagVO;
+import me.blog.backend.domain.blog.service.BlogService;
+import me.blog.backend.domain.blog.VO.BlogVO;
+import me.blog.backend.domain.blog.VO.TagVO;
+import me.blog.backend.domain.blog.service.TagService;
 
 @RestController
 @RequestMapping("/blogs")

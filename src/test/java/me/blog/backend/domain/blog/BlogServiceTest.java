@@ -13,8 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import me.blog.backend.common.exception.BlogNotFoundException;
+import me.blog.backend.domain.blog.VO.BlogVO;
 import me.blog.backend.domain.blog.entity.BlogEntity;
 import me.blog.backend.domain.blog.repository.BlogRepository;
+import me.blog.backend.domain.blog.service.BlogService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

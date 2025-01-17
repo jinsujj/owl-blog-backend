@@ -1,4 +1,4 @@
-package me.blog.backend.domain.blog;
+package me.blog.backend.domain.blog.VO;
 
 import java.util.List;
 import java.util.Set;
