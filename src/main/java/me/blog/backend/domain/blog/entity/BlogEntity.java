@@ -43,6 +43,7 @@ public class BlogEntity {
   private LocalDateTime updatedAt;
   @Column(name= "published_at", nullable = true)
   private LocalDateTime publishedAt;
+  private String thumbnailUrl;
 
   public BlogEntity(String title, String content, int readCount, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime publishedAt) {
     this.title = title;
@@ -91,5 +92,13 @@ public class BlogEntity {
 
   public void removeTag(TagEntity tag) {
     blogTags.removeIf(blogTag -> blogTag.getTag().equals(tag));
+  }
+
+  public void upLoadThumbnailUrl(String thumbnailUrl) {
+    this.thumbnailUrl = thumbnailUrl;
+  }
+
+  public void removeThumbnailUrl() {
+    this.thumbnailUrl = null;
   }
 }

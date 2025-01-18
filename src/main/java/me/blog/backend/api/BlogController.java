@@ -74,6 +74,17 @@ public class BlogController {
     return ResponseEntity.ok(blogService.getBlogById(id));
   }
 
+
+  @GetMapping("/tags")
+  public ResponseEntity<TagVO[]> getTagsAll(){
+    return ResponseEntity.ok(tagService.getTagsAll());
+  }
+
+  @GetMapping("/{id}/tags")
+  public ResponseEntity<TagVO[]> getTagsById(@PathVariable Long id){
+    return ResponseEntity.ok(tagService.getTagByBlogId(id));
+  }
+
   public record BlogRequest(String title, String content, List<TagVO> tags) {}
 
   public record BlogSummary(Long id, String title, String summary, int readCount, LocalDateTime createdAt, LocalDateTime publishedAt, TagVO[] tags) {}
