@@ -41,3 +41,6 @@ out/
 
 ### config file ###
 application.yml
+
+### db ###
+*.db
