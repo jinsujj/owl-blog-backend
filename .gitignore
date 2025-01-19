@@ -44,3 +44,6 @@ application.yml
 
 ### db ###
 *.db
+
+### static file ###
+/static/uploads/*

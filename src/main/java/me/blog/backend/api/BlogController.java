@@ -74,7 +74,6 @@ public class BlogController {
     return ResponseEntity.ok(blogService.getBlogById(id));
   }
 
-
   @GetMapping("/tags")
   public ResponseEntity<TagVO[]> getTagsAll(){
     return ResponseEntity.ok(tagService.getTagsAll());
