@@ -45,22 +45,21 @@ public class BlogEntity {
   private LocalDateTime publishedAt;
   private String thumbnailUrl;
 
-  public BlogEntity(String title, String content, int readCount, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime publishedAt) {
-    this.title = title;
-    this.content = content;
-    this.readCount = readCount;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-    this.publishedAt = publishedAt;
-  }
-
-  public BlogEntity(String title, String content, LocalDateTime createdAt){
+  public BlogEntity(String title, String content){
    this.title = title;
    this.content = content;
    this.readCount = 0;
-   this.createdAt = createdAt;
+   this.createdAt = LocalDateTime.now();
    this.updatedAt = null;
    this.publishedAt = null;
+  }
+
+  public BlogEntity(String title, String content, String thumbnailUrl){
+    this.title = title;
+    this.content = content;
+    this.readCount = 0;
+    this.createdAt = LocalDateTime.now();
+    this.thumbnailUrl = thumbnailUrl;
   }
 
   public boolean isPublished() {

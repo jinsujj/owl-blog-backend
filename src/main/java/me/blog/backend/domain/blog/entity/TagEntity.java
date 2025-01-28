@@ -1,10 +1,6 @@
 package me.blog.backend.domain.blog.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,12 +15,13 @@ public class TagEntity {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-	private String name;
+ @Column(name = "name")
+  private String value;
 
   private String label;
 
-  public TagEntity(String name,String label) {
-		this.name = name;
+  public TagEntity(String value,String label) {
+    this.value = value;
     this.label = label;
   }
 }

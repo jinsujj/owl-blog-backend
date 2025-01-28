@@ -2,6 +2,8 @@ package me.blog.backend.domain.blog.service;
 
 import java.util.List;
 import java.util.Set;
+
+import me.blog.backend.domain.blog.repository.BlogTagRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +19,12 @@ import me.blog.backend.domain.blog.repository.TagRepository;
 public class TagService {
   private final TagRepository tagRepository;
   private final BlogRepository blogRepository;
+  private final BlogTagRepository blogTagRepository;
 
-  public TagService(TagRepository tagRepository, BlogRepository blogRepository) {
+  public TagService(TagRepository tagRepository, BlogRepository blogRepository, BlogTagRepository blogTagRepository) {
     this.tagRepository = tagRepository;
     this.blogRepository = blogRepository;
+    this.blogTagRepository = blogTagRepository;
   }
 
   @Transactional
@@ -28,13 +32,28 @@ public class TagService {
     var blog = getBlogEntity(blogId);
 
     for (TagVO tag : tags) {
-      TagEntity newTag = tagRepository.findByName(tag.name()).stream()
-          .findFirst()
-          .orElseGet(() -> tagRepository.save(new TagEntity(tag.name(), tag.label())));
-      blog.addTag(newTag);
+        TagEntity newTag = tagRepository.findByValue(tag.name()).stream()
+                .findFirst()
+                .orElseGet(() -> tagRepository.save(new TagEntity(tag.name(), tag.label())));
+        blog.addTag(newTag);
     }
 
     blogRepository.save(blog);
+  }
+
+  @Transactional
+  public void updateTags(List<TagVO> tags, Long blogId){
+    var blog = getBlogEntity(blogId);
+
+    Set<BlogTagEntity> blogTags = blog.getBlogTags();
+    blogTagRepository.deleteAll(blogTags);
+
+    for (TagVO tag : tags) {
+      TagEntity newTag = tagRepository.findByValue(tag.name()).stream()
+              .findFirst()
+              .orElseGet(() -> tagRepository.save(new TagEntity(tag.name(), tag.label())));
+      blog.addTag(newTag);
+    }
   }
 
   @Transactional(readOnly = true)

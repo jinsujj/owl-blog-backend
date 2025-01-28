@@ -8,7 +8,7 @@ import me.blog.backend.domain.blog.entity.TagEntity;
 
 public record TagVO(String name, String label){
   public static TagVO from(TagEntity tag) {
-    return new TagVO(tag.getName(), tag.getLabel());
+    return new TagVO(tag.getValue(), tag.getLabel());
   }
 
   public static TagVO[] from(List<TagEntity> tags) {

@@ -21,18 +21,23 @@ public class BlogService {
   }
 
   @Transactional
-  public BlogVO postBlog(String title, String content){
-    BlogEntity blog = new BlogEntity(title, content, LocalDateTime.now());
+  public BlogVO postBlog(String title, String content, String thumbnailUrl){
+    BlogEntity blog = new BlogEntity(title, content, thumbnailUrl);
     return BlogVO.fromEntity(blogRepository.save(blog));
   }
 
   @Transactional
-  public BlogVO updateBlog(Long id, String newTitle, String newContent) {
+  public BlogVO updateBlog(Long id, String newTitle, String newContent, String thumbNailUrl) {
     BlogEntity blogEntity = blogRepository.findById(id)
         .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
+
     blogEntity.setTitle(newTitle);
     blogEntity.setContent(newContent);
     blogEntity.setUpdatedAt(LocalDateTime.now());
+
+    if(!thumbNailUrl.equals(blogEntity.getThumbnailUrl()))
+      blogEntity.setThumbnailUrl(thumbNailUrl);
+
     return BlogVO.fromEntity(blogRepository.save(blogEntity));
   }
 

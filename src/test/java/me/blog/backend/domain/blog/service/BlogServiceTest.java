@@ -39,16 +39,18 @@ class BlogServiceTest {
     // given
     String title = "Test Title";
     String content = "Test Content";
-    BlogEntity blogEntity = new BlogEntity(title, content, LocalDateTime.now());
+    String thumbnailUrl ="https://backend.owl-dev.me/files/substation2.0.png";
+    BlogEntity blogEntity = new BlogEntity(title, content, thumbnailUrl);
     when(blogRepository.save(any(BlogEntity.class))).thenReturn(blogEntity);
 
     // when
-    BlogVO result = blogService.postBlog(title, content);
+    BlogVO result = blogService.postBlog(title, content, thumbnailUrl);
 
     // then
     assertNotNull(result);
     assertEquals(result.title(), title);
     assertEquals(result.content(), content);
+    assertEquals(result.thumbnailUrl(), thumbnailUrl);
     verify(blogRepository, times(1)).save(any(BlogEntity.class));
   };
 
@@ -58,17 +60,19 @@ class BlogServiceTest {
     Long id = 1L;
     String newTitle = "New Title";
     String newContent = "New Content";
-    BlogEntity existingBlog = new BlogEntity("Old Title", "Old Content", LocalDateTime.now());
+    String thumbnailUrl ="https://backend.owl-dev.me/files/substation2.0.png";
+    BlogEntity existingBlog = new BlogEntity("Old Title", "Old Content", thumbnailUrl);
     when(blogRepository.findById(id)).thenReturn(Optional.of(existingBlog));
     when(blogRepository.save(existingBlog)).thenReturn(existingBlog);
 
     // when
-    BlogVO result = blogService.updateBlog(id, newTitle, newContent);
+    BlogVO result = blogService.updateBlog(id, newTitle, newContent, thumbnailUrl);
 
     // then
     assertNotNull(result);
     assertEquals(result.title(), newTitle);
     assertEquals(result.content(), newContent);
+    assertEquals(result.thumbnailUrl(), thumbnailUrl);
     verify(blogRepository, times(1)).findById(id);
     verify(blogRepository, times(1)).save(any(BlogEntity.class));
   }
@@ -76,8 +80,8 @@ class BlogServiceTest {
   @Test
   void test_getAllBlogs(){
     // given
-    BlogEntity blog1 = new BlogEntity("Title 1", "Content 1", LocalDateTime.now());
-    BlogEntity blog2 = new BlogEntity("Title 2", "Content 2", LocalDateTime.now());
+    BlogEntity blog1 = new BlogEntity("Title 1", "Content 1");
+    BlogEntity blog2 = new BlogEntity("Title 2", "Content 2");
     when(blogRepository.findAll()).thenReturn(Arrays.asList(blog1, blog2));
 
     // when
@@ -93,7 +97,7 @@ class BlogServiceTest {
   void test_publishBlog() {
     // given
     Long id = 1L;
-    BlogEntity blogEntity = new BlogEntity("Title", "Content", LocalDateTime.now());
+    BlogEntity blogEntity = new BlogEntity("Title", "Content");
     when(blogRepository.findById(id)).thenReturn(Optional.of(blogEntity));
     when(blogRepository.save(blogEntity)).thenReturn(blogEntity);
 
@@ -113,7 +117,7 @@ class BlogServiceTest {
     Long id =1L;
     String title = "Test Title";
     String content = "Test Content";
-    BlogEntity blog = new BlogEntity(title, content, LocalDateTime.now());
+    BlogEntity blog = new BlogEntity(title, content);
     when(blogRepository.findById(id)).thenReturn(Optional.of(blog));
 
     // when && then
@@ -129,7 +133,8 @@ class BlogServiceTest {
     String title = "Test Title";
     String content = "Test Content";
     int readCount =11;
-    BlogEntity blog = new BlogEntity(title, content, readCount,LocalDateTime.now(), null, null);
+    BlogEntity blog = new BlogEntity(title, content);
+    blog.setReadCount(readCount);
     blog.publish();
     when(blogRepository.findById(id)).thenReturn(Optional.of(blog));
 
@@ -143,5 +148,4 @@ class BlogServiceTest {
     assertEquals(result.content(), blog.getContent());
     verify(blogRepository, times(1)).findById(id);
   }
-
 }

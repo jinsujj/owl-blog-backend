@@ -29,15 +29,21 @@ public class BlogController {
 
   @PostMapping
   public ResponseEntity<BlogVO> postBlog(@RequestBody BlogRequest blogRequest) {
-    BlogVO blog = blogService.postBlog(blogRequest.title(), blogRequest.content());
-    tagService.postTags(blogRequest.tags, blog.id());
+    BlogVO blog = blogService.postBlog(blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl);
+
+    if(blogRequest.tags != null)
+      tagService.postTags(blogRequest.tags, blog.id());
 
     return ResponseEntity.ok(blog);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<BlogVO> updateBlog(@PathVariable Long id, @RequestBody BlogRequest blogRequest) {
-    BlogVO updatedBlog = blogService.updateBlog(id, blogRequest.title(), blogRequest.content());
+    BlogVO updatedBlog = blogService.updateBlog(id, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl);
+
+    if(blogRequest.tags != null)
+      tagService.updateTags(blogRequest.tags, id);
+
     return ResponseEntity.ok(updatedBlog);
   }
 
@@ -60,6 +66,7 @@ public class BlogController {
             blog.id(),
             blog.title(),
             blog.summary(),
+            blog.thumbnailUrl(),
             blog.readCount(),
             blog.createdAt(),
             blog.publishedAt(),
@@ -84,7 +91,7 @@ public class BlogController {
     return ResponseEntity.ok(tagService.getTagByBlogId(id));
   }
 
-  public record BlogRequest(String title, String content, List<TagVO> tags) {}
+  public record BlogRequest(String title, String content, String thumbnailUrl, List<TagVO> tags) {}
 
-  public record BlogSummary(Long id, String title, String summary, int readCount, LocalDateTime createdAt, LocalDateTime publishedAt, TagVO[] tags) {}
+  public record BlogSummary(Long id, String title, String summary, String thumbnailUrl, int readCount, LocalDateTime createdAt, LocalDateTime publishedAt, TagVO[] tags) {}
 }

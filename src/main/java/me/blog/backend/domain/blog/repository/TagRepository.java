@@ -8,5 +8,5 @@ import me.blog.backend.domain.blog.entity.TagEntity;
 
 @Repository
 public interface TagRepository extends JpaRepository<TagEntity, Long>{
-  List<TagEntity> findByName(String name);
+  List<TagEntity> findByValue(String value);
 }

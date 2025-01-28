@@ -3,6 +3,9 @@ package me.blog.backend.domain.blog.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import me.blog.backend.domain.blog.repository.BlogTagRepository;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -20,6 +23,8 @@ import me.blog.backend.domain.blog.repository.TagRepository;
 import me.blog.backend.domain.blog.vo.TagVO;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -33,6 +38,8 @@ class TagServiceTest {
   private TagRepository tagRepository;
   @Mock
   private BlogRepository blogRepository;
+  @Mock
+  private BlogTagRepository blogTagRepository;
   @InjectMocks
   private TagService tagService;
 
@@ -49,7 +56,7 @@ class TagServiceTest {
     TagEntity mockTag = new TagEntity("tag1", "label1");
     List<TagVO> tags = List.of(new TagVO("tag1", "label1"));
     when(blogRepository.findById(blogId)).thenReturn(Optional.of(mockBlog));
-    when(tagRepository.findByName(anyString())).thenReturn(List.of());
+    when(tagRepository.findByValue(anyString())).thenReturn(List.of());
     when(tagRepository.save(any(TagEntity.class))).thenReturn(mockTag);
 
     // when
@@ -57,7 +64,7 @@ class TagServiceTest {
 
     // then
     verify(blogRepository).findById(blogId);
-    verify(tagRepository, times(1)).findByName(anyString());
+    verify(tagRepository, times(1)).findByValue(anyString());
     verify(tagRepository, times(1)).save(any(TagEntity.class));
     verify(mockBlog, times(1)).addTag(any(TagEntity.class));
     verify(blogRepository).save(mockBlog);
@@ -72,7 +79,7 @@ class TagServiceTest {
     List<TagVO> tags = List.of(new TagVO("tag1", "label1"));
 
     when(blogRepository.findById(blogId)).thenReturn(Optional.of(mockBlog));
-    when(tagRepository.findByName(anyString())).thenReturn(List.of(existingTag));
+    when(tagRepository.findByValue(anyString())).thenReturn(List.of(existingTag));
 
     // when
     tagService.postTags(tags, blogId);
@@ -81,6 +88,32 @@ class TagServiceTest {
     verify(tagRepository, never()).save(any(TagEntity.class));
     verify(mockBlog).addTag(existingTag);
     verify(blogRepository).save(mockBlog);
+  }
+
+  @Test
+  void test_updateTags(){
+    // given
+    Long blogId = 1L;
+    BlogEntity mockBlog = mock(BlogEntity.class);
+    Set<BlogTagEntity> existingBlogTags = Set.of(new BlogTagEntity(mockBlog, new TagEntity("tag1", "label1")));
+    List<TagVO> tags = List.of(new TagVO("tag2", "label2"));
+
+    when(blogRepository.findById(blogId)).thenReturn(Optional.of(mockBlog));
+    when(mockBlog.getBlogTags()).thenReturn(existingBlogTags);
+    when(tagRepository.findByValue("tag2")).thenReturn(List.of());
+
+    // when
+    tagService.updateTags(tags, blogId);
+
+    // then
+    verify(blogTagRepository).deleteAll(existingBlogTags);
+    verify(tagRepository).save(any(TagEntity.class));
+
+    ArgumentCaptor<TagEntity> captor = ArgumentCaptor.forClass(TagEntity.class);
+    verify(tagRepository).save(captor.capture());
+    TagEntity savedTag = captor.getValue();
+    assertEquals("tag2", savedTag.getValue());
+    assertEquals("label2", savedTag.getLabel());
   }
 
   @Test

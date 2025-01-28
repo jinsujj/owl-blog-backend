@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import me.blog.backend.common.exception.FileStorageException;
@@ -32,7 +34,9 @@ public class LocalFileStorageAdapter implements FileStoragePort{
 
 
       // save file
-      String fileName = file.getOriginalFilename();
+      String fileName = Objects.requireNonNull(file.getOriginalFilename(), "file name is null")
+              .replace(' ', '_');
+
       Path filePath = directoryPath.resolve(fileName);
       try (InputStream inputStream = file.getInputStream()) {
         Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
