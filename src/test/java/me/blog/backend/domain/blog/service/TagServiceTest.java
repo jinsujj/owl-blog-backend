@@ -133,8 +133,9 @@ class TagServiceTest {
     when(blogRepository.findById(blogId)).thenReturn(Optional.of(mockBlog));
     when(blogTagRepository.findByBlog(mockBlog)).thenReturn(blogTagList);
     when(mockBlog.getBlogTags()).thenReturn(blogTagSet);
+    when(blogTagRepository.findByTag(existingTag)).thenReturn(List.of(existingBlogTag));
     when(blogTagRepository.findByTag(unusedTag)).thenReturn(List.of());
-    
+
     List<TagVO> newTags = List.of(new TagVO("tag1", "label1"), new TagVO("tag2", "label2"));
     when(tagRepository.findByValue("tag1")).thenReturn(List.of(existingTag));
     when(tagRepository.findByValue("tag2")).thenReturn(List.of());
@@ -143,9 +144,11 @@ class TagServiceTest {
     tagService.updateTags(newTags, blogId);
     
     // then
-    ArgumentCaptor<BlogTagEntity> tagCaptor = ArgumentCaptor.forClass(BlogTagEntity.class);
-    verify(blogTagRepository, times(2)).delete(tagCaptor.capture());
-    assertEquals(unusedBlogTag, tagCaptor.getValue());
+    ArgumentCaptor<List> tagListCaptor = ArgumentCaptor.forClass(List.class);
+    verify(blogTagRepository, times(1)).deleteAll(tagListCaptor.capture());
+    verify(tagRepository, times(1)).delete(unusedTag);
+    verify(tagRepository, times(0)).delete(existingTag);
+    assertEquals(2, tagListCaptor.getValue().size());
   }
 
   @Test

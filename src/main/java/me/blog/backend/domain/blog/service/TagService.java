@@ -60,7 +60,7 @@ public class TagService {
     for(BlogTagEntity tag : blogTagList) {
       List<BlogTagEntity> byTag = blogTagRepository.findByTag(tag.getTag());
       if(byTag.isEmpty()) {
-        blogTagRepository.delete(tag);
+        tagRepository.delete(tag.getTag());
       }
     }
   }
