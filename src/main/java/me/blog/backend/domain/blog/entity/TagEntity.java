@@ -15,9 +15,9 @@ public class TagEntity {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
- @Column(name = "name")
+  @Column(name = "name")
   private String value;
-
+  @Column(nullable = false, unique = true)
   private String label;
 
   public TagEntity(String value,String label) {

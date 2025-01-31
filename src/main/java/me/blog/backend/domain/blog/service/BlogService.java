@@ -50,7 +50,6 @@ public class BlogService {
   @Transactional
   public BlogVO getBlogById(Long id) {
     BlogEntity blogEntity = blogRepository.findById(id)
-        .filter(BlogEntity::isPublished)
         .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
 
     blogEntity.readCounting();

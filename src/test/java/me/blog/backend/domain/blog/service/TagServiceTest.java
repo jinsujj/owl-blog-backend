@@ -1,8 +1,6 @@
 package me.blog.backend.domain.blog.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import me.blog.backend.domain.blog.repository.BlogTagRepository;
 import org.mockito.ArgumentCaptor;
@@ -114,6 +112,40 @@ class TagServiceTest {
     TagEntity savedTag = captor.getValue();
     assertEquals("tag2", savedTag.getValue());
     assertEquals("label2", savedTag.getLabel());
+  }
+
+  @Test
+  void test_updateTags_delete_not_used_tags(){
+    // given
+    Long blogId = 1L;
+    BlogEntity mockBlog = mock(BlogEntity.class);
+    TagEntity existingTag = new TagEntity("tag1", "label1");
+    TagEntity unusedTag = new TagEntity("unused", "unused_label");
+
+    BlogTagEntity existingBlogTag = new BlogTagEntity(mockBlog, existingTag);
+    BlogTagEntity unusedBlogTag = new BlogTagEntity(mockBlog, unusedTag);
+
+    List<BlogTagEntity> blogTagList = new ArrayList<>();
+    blogTagList.add(existingBlogTag);
+    blogTagList.add(unusedBlogTag);
+    Set<BlogTagEntity> blogTagSet = new HashSet<>(blogTagList);
+
+    when(blogRepository.findById(blogId)).thenReturn(Optional.of(mockBlog));
+    when(blogTagRepository.findByBlog(mockBlog)).thenReturn(blogTagList);
+    when(mockBlog.getBlogTags()).thenReturn(blogTagSet);
+    when(blogTagRepository.findByTag(unusedTag)).thenReturn(List.of());
+    
+    List<TagVO> newTags = List.of(new TagVO("tag1", "label1"), new TagVO("tag2", "label2"));
+    when(tagRepository.findByValue("tag1")).thenReturn(List.of(existingTag));
+    when(tagRepository.findByValue("tag2")).thenReturn(List.of());
+
+    // when
+    tagService.updateTags(newTags, blogId);
+    
+    // then
+    ArgumentCaptor<BlogTagEntity> tagCaptor = ArgumentCaptor.forClass(BlogTagEntity.class);
+    verify(blogTagRepository, times(2)).delete(tagCaptor.capture());
+    assertEquals(unusedBlogTag, tagCaptor.getValue());
   }
 
   @Test

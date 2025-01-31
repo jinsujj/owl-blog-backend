@@ -42,17 +42,26 @@ public class TagService {
   }
 
   @Transactional
-  public void updateTags(List<TagVO> tags, Long blogId){
+  public void updateTags(List<TagVO> tags, Long blogId) {
     var blog = getBlogEntity(blogId);
+    List<BlogTagEntity> blogTagList = blogTagRepository.findByBlog(blog);
 
-    Set<BlogTagEntity> blogTags = blog.getBlogTags();
-    blogTagRepository.deleteAll(blogTags);
+    blog.getBlogTags().clear();
+    blogTagRepository.deleteAll(blogTagList);
+    blogTagRepository.flush();
 
     for (TagVO tag : tags) {
       TagEntity newTag = tagRepository.findByValue(tag.name()).stream()
               .findFirst()
               .orElseGet(() -> tagRepository.save(new TagEntity(tag.name(), tag.label())));
       blog.addTag(newTag);
+    }
+
+    for(BlogTagEntity tag : blogTagList) {
+      List<BlogTagEntity> byTag = blogTagRepository.findByTag(tag.getTag());
+      if(byTag.isEmpty()) {
+        blogTagRepository.delete(tag);
+      }
     }
   }
 

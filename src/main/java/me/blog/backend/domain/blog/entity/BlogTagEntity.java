@@ -32,7 +32,7 @@ public class BlogTagEntity {
   @JoinColumn(name ="blog_id", nullable = false)
   private BlogEntity blog;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name ="tag_id", nullable = false)
   private TagEntity tag;
 

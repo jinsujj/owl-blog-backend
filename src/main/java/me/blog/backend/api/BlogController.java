@@ -68,7 +68,7 @@ public class BlogController {
             blog.summary(),
             blog.thumbnailUrl(),
             blog.readCount(),
-            blog.createdAt(),
+            blog.updatedAt(),
             blog.publishedAt(),
             blog.tags()
         )).toList();
@@ -93,5 +93,5 @@ public class BlogController {
 
   public record BlogRequest(String title, String content, String thumbnailUrl, List<TagVO> tags) {}
 
-  public record BlogSummary(Long id, String title, String summary, String thumbnailUrl, int readCount, LocalDateTime createdAt, LocalDateTime publishedAt, TagVO[] tags) {}
+  public record BlogSummary(Long id, String title, String summary, String thumbnailUrl, int readCount, LocalDateTime updatedAt, LocalDateTime publishedAt, TagVO[] tags) {}
 }
