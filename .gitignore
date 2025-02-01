@@ -47,3 +47,5 @@ application.yml
 
 ### static file ###
 /static/uploads/*
+
+image/*
