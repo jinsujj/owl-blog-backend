@@ -45,10 +45,7 @@ public class TagService {
   public void updateTags(List<TagVO> tags, Long blogId) {
     var blog = getBlogEntity(blogId);
     List<BlogTagEntity> blogTagList = blogTagRepository.findByBlog(blog);
-
     blog.getBlogTags().clear();
-    blogTagRepository.deleteAll(blogTagList);
-    blogTagRepository.flush();
 
     for (TagVO tag : tags) {
       TagEntity newTag = tagRepository.findByValue(tag.name()).stream()

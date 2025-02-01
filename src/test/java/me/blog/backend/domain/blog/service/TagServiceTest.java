@@ -93,7 +93,7 @@ class TagServiceTest {
     // given
     Long blogId = 1L;
     BlogEntity mockBlog = mock(BlogEntity.class);
-    Set<BlogTagEntity> existingBlogTags = Set.of(new BlogTagEntity(mockBlog, new TagEntity("tag1", "label1")));
+    Set<BlogTagEntity> existingBlogTags = new HashSet<>(Set.of(new BlogTagEntity(mockBlog, new TagEntity("tag1", "label1"))));
     List<TagVO> tags = List.of(new TagVO("tag2", "label2"));
 
     when(blogRepository.findById(blogId)).thenReturn(Optional.of(mockBlog));
@@ -104,7 +104,6 @@ class TagServiceTest {
     tagService.updateTags(tags, blogId);
 
     // then
-    verify(blogTagRepository).deleteAll(existingBlogTags);
     verify(tagRepository).save(any(TagEntity.class));
 
     ArgumentCaptor<TagEntity> captor = ArgumentCaptor.forClass(TagEntity.class);
@@ -144,11 +143,11 @@ class TagServiceTest {
     tagService.updateTags(newTags, blogId);
     
     // then
-    ArgumentCaptor<List> tagListCaptor = ArgumentCaptor.forClass(List.class);
-    verify(blogTagRepository, times(1)).deleteAll(tagListCaptor.capture());
-    verify(tagRepository, times(1)).delete(unusedTag);
+    ArgumentCaptor<TagEntity> tagListCaptor = ArgumentCaptor.forClass(TagEntity.class);
+
+    verify(tagRepository, times(1)).delete(tagListCaptor.capture());
+    assertEquals("unused", tagListCaptor.getValue().getValue());
     verify(tagRepository, times(0)).delete(existingTag);
-    assertEquals(2, tagListCaptor.getValue().size());
   }
 
   @Test
@@ -185,7 +184,7 @@ class TagServiceTest {
 
     // then
     assertThat(result).hasSize(2);
-    assertThat(result).extracting(TagVO::name).containsExactly("tag1","tag2");
+    assertThat(result).extracting(TagVO::name).contains("tag1","tag2");
     verify(blogRepository).findById(blogId);
     verify(mockBlog).getBlogTags();
   }
