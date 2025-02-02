@@ -34,7 +34,22 @@ public class KakaoAuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public String getAccessToken(String code) {
+    public String kakaoLogin(String code) {
+        String accessToken = getAccessToken(code);
+        if (accessToken == null)
+            throw new RuntimeException("Kakao access token is null");
+
+        Map<String, Object> userInfo = getUserInfo(accessToken);
+        if(userInfo == null)
+            throw new RuntimeException("Kakao user info is null");
+
+        String kakaoId = String.valueOf(userInfo.get("id"));
+        String email = (String) ((Map<String, Object>) userInfo.get("kakao_account")).get("email");
+
+        return jwtTokenProvider.createToken(kakaoId, email);
+    }
+
+    private String getAccessToken(String code) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -62,7 +77,7 @@ public class KakaoAuthService {
         return null;
     }
 
-    public Map<String,Object> getUserInfo(String accessToken) {
+    private Map<String,Object> getUserInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
@@ -71,31 +86,8 @@ public class KakaoAuthService {
         return response.getBody();
     }
     
-    public String kakaoLogin(String code) {
-        String accessToken = getAccessToken(code);
-        if (accessToken == null)
-            throw new RuntimeException("Kakao access token is null");
-
-        Map<String, Object> userInfo = getUserInfo(accessToken);
-        if(userInfo == null)
-            throw new RuntimeException("Kakao user info is null");
-
-        String kakaoId = String.valueOf(userInfo.get("id"));
-        String email = (String) ((Map<String, Object>) userInfo.get("kakao_account")).get("email");
-
-        return jwtTokenProvider.createToken(kakaoId, email);
-    }
-
-    public boolean isLoggedIn(HttpServletRequest request){
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {
-                    return jwtTokenProvider.validateToken(cookie.getValue());
-                }
-            }
-        }
-        return false;
+    public boolean isLoggedIn(String token){
+        return token != null && jwtTokenProvider.validateToken(token);
     }
 
     public void logout(HttpServletResponse response) {
