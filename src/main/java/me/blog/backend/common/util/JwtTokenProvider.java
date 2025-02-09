@@ -16,7 +16,10 @@ public class JwtTokenProvider {
     private final long expirationTime;
 
     public JwtTokenProvider(String secretKey, long expirationTime) {
-        this.secretKey = secretKey;
+        if (secretKey.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalArgumentException("Secret key must be at least 32 bytes long for HS256.");
+        }
+        this.secretKey = String.valueOf(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)));
         this.expirationTime = expirationTime;
     }
 

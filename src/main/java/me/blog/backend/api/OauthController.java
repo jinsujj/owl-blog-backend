@@ -26,12 +26,17 @@ public class OauthController {
     }
 
     @GetMapping("/token/validate")
-    public ResponseEntity<Map<String, Object>> checkLoginStatus(@CookieValue(value = "token", required = false) String token) {
-        boolean isLoggedIn = kakaoAuthService.isLoggedIn(token);
+    public ResponseEntity<Map<String, Object>> checkLoginStatus(@CookieValue(value = "token", required = true) String token) {
+        boolean isLoggedIn = kakaoAuthService.validateToken(token);
 
         Map<String, Object> response = new HashMap<>();
         response.put("isValid", isLoggedIn);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/token/decode")
+    public ResponseEntity<UserResponse> getCurrentUser(@CookieValue(value ="token", required = true) String token) {
+        return ResponseEntity.ok(kakaoAuthService.getUserByToken(token));
     }
 
     @PostMapping("/logout")
@@ -44,4 +49,7 @@ public class OauthController {
 
 
     public record kakaoRequest(String code) {}
+
+    public record UserResponse(String userName, String imageUrl, String email){}
+
 }
