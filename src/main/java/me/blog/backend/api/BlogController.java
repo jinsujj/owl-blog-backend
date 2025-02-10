@@ -2,14 +2,10 @@ package me.blog.backend.api;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import me.blog.backend.domain.blog.service.KakaoAuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import me.blog.backend.domain.blog.service.BlogService;
 import me.blog.backend.domain.blog.vo.BlogVO;
@@ -21,15 +17,19 @@ import me.blog.backend.domain.blog.service.TagService;
 public class BlogController {
   private final BlogService blogService;
   private final TagService tagService;
+  private final KakaoAuthService authService;
 
-  public BlogController(BlogService blogService, TagService tagService) {
+  public BlogController(BlogService blogService, TagService tagService, KakaoAuthService authService) {
     this.blogService = blogService;
     this.tagService = tagService;
+    this.authService = authService;
   }
 
   @PostMapping
   public ResponseEntity<BlogVO> postBlog(@RequestBody BlogRequest blogRequest) {
-    BlogVO blog = blogService.postBlog(blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl);
+    BlogVO blog = blogService.postBlog(
+      blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl
+    );
 
     if(blogRequest.tags != null)
       tagService.postTags(blogRequest.tags, blog.id());
@@ -39,7 +39,9 @@ public class BlogController {
 
   @PutMapping("/{id}")
   public ResponseEntity<BlogVO> updateBlog(@PathVariable Long id, @RequestBody BlogRequest blogRequest) {
-    BlogVO updatedBlog = blogService.updateBlog(id, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl);
+    BlogVO updatedBlog = blogService.updateBlog(
+      id, blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl
+    );
 
     if(blogRequest.tags != null)
       tagService.updateTags(blogRequest.tags, id);
@@ -60,20 +62,32 @@ public class BlogController {
   }
 
   @GetMapping("/summary")
-  public ResponseEntity<List<BlogSummary>> getAllBlogs() {
-    List<BlogSummary> simplifiedBlogs = blogService.getAllBlogs().stream()
-        .map(blog -> new BlogSummary(
-            blog.id(),
-            blog.title(),
-            blog.summary(),
-            blog.thumbnailUrl(),
-            blog.readCount(),
-            blog.updatedAt(),
-            blog.publishedAt(),
-            blog.tags()
-        )).toList();
-
-    return ResponseEntity.ok(simplifiedBlogs);
+  public ResponseEntity<List<BlogSummary>> getAllBlogs(@CookieValue(value ="token", required = false) String token) {
+    if (token != null){
+      String userId = String.valueOf(authService.getUserByToken(token).id());
+      return ResponseEntity.ok(blogService.getAllBlogsByUser(userId).stream()
+            .map(blog -> new BlogSummary(
+                    blog.id(),
+                    blog.title(),
+                    blog.summary(),
+                    blog.thumbnailUrl(),
+                    blog.readCount(),
+                    blog.updatedAt(),
+                    blog.publishedAt(),
+                    blog.tags()
+            )).toList());
+    }
+    return ResponseEntity.ok(blogService.getAllBlogs().stream()
+            .map(blog -> new BlogSummary(
+                    blog.id(),
+                    blog.title(),
+                    blog.summary(),
+                    blog.thumbnailUrl(),
+                    blog.readCount(),
+                    blog.updatedAt(),
+                    blog.publishedAt(),
+                    blog.tags()
+            )).toList());
   }
 
   @GetMapping("/{id}")
@@ -91,7 +105,7 @@ public class BlogController {
     return ResponseEntity.ok(tagService.getTagByBlogId(id));
   }
 
-  public record BlogRequest(String title, String content, String thumbnailUrl, List<TagVO> tags) {}
+  public record BlogRequest(String userId, String title, String content, String thumbnailUrl, List<TagVO> tags) {}
 
   public record BlogSummary(Long id, String title, String summary, String thumbnailUrl, int readCount, LocalDateTime updatedAt, LocalDateTime publishedAt, TagVO[] tags) {}
 }

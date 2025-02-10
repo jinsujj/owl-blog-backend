@@ -21,22 +21,23 @@ public class BlogService {
   }
 
   @Transactional
-  public BlogVO postBlog(String title, String content, String thumbnailUrl){
-    BlogEntity blog = new BlogEntity(title, content, thumbnailUrl);
+  public BlogVO postBlog(String userId, String title, String content, String thumbnailUrl){
+    BlogEntity blog = new BlogEntity(userId, title, content, thumbnailUrl);
     return BlogVO.fromEntity(blogRepository.save(blog));
   }
 
   @Transactional
-  public BlogVO updateBlog(Long id, String newTitle, String newContent, String thumbNailUrl) {
+  public BlogVO updateBlog(Long id,String userId, String newTitle, String newContent, String thumbNailUrl) {
     BlogEntity blogEntity = blogRepository.findById(id)
         .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
 
+    blogEntity.setAuthor(userId);
     blogEntity.setTitle(newTitle);
     blogEntity.setContent(newContent);
     blogEntity.setUpdatedAt(LocalDateTime.now());
 
     if(!thumbNailUrl.equals(blogEntity.getThumbnailUrl()))
-      blogEntity.setThumbnailUrl(thumbNailUrl);
+      blogEntity.upLoadThumbnailUrl(thumbNailUrl);
 
     return BlogVO.fromEntity(blogRepository.save(blogEntity));
   }
@@ -44,10 +45,19 @@ public class BlogService {
   @Transactional(readOnly = true)
   public List<BlogVO> getAllBlogs() {
     return blogRepository.findAll().stream()
-        .map(BlogVO::fromEntity).collect(Collectors.toList());
+            .filter(BlogEntity::isPublished)
+            .map(BlogVO::fromEntity)
+            .collect(Collectors.toList());
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
+  public List<BlogVO> getAllBlogsByUser(String userId) {
+    return blogRepository.findByAuthor(userId).stream()
+            .map(BlogVO::fromEntity)
+            .collect(Collectors.toList());
+  }
+
+  @Transactional(readOnly = true)
   public BlogVO getBlogById(Long id) {
     BlogEntity blogEntity = blogRepository.findById(id)
         .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));

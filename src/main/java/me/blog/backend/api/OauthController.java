@@ -26,10 +26,14 @@ public class OauthController {
     }
 
     @GetMapping("/token/validate")
-    public ResponseEntity<Map<String, Object>> checkLoginStatus(@CookieValue(value = "token", required = true) String token) {
-        boolean isLoggedIn = kakaoAuthService.validateToken(token);
-
+    public ResponseEntity<Map<String, Object>> checkLoginStatus(@CookieValue(value = "token", required = false) String token) {
         Map<String, Object> response = new HashMap<>();
+        if (token == null) {
+            response.put("isValid", false);
+            return ResponseEntity.ok(response);
+        }
+
+        boolean isLoggedIn = kakaoAuthService.validateToken(token);
         response.put("isValid", isLoggedIn);
         return ResponseEntity.ok(response);
     }
@@ -50,6 +54,6 @@ public class OauthController {
 
     public record kakaoRequest(String code) {}
 
-    public record UserResponse(String userName, String imageUrl, String email){}
+    public record UserResponse(Long id, String userName, String imageUrl, String email){}
 
 }

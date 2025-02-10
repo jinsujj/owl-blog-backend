@@ -5,6 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import me.blog.backend.domain.blog.entity.BlogEntity;
 
+import java.util.List;
+
 @Repository
 public interface BlogRepository extends JpaRepository<BlogEntity, Long> {
+    List<BlogEntity> findByAuthor(String author);
 }

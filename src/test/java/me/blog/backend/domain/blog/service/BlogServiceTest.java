@@ -37,6 +37,7 @@ class BlogServiceTest {
   @Test
   void test_createBlog(){
     // given
+    String author = "12";
     String title = "Test Title";
     String content = "Test Content";
     String thumbnailUrl ="https://backend.owl-dev.me/files/substation2.0.png";
@@ -44,10 +45,11 @@ class BlogServiceTest {
     when(blogRepository.save(any(BlogEntity.class))).thenReturn(blogEntity);
 
     // when
-    BlogVO result = blogService.postBlog(title, content, thumbnailUrl);
+    BlogVO result = blogService.postBlog(author,title, content, thumbnailUrl);
 
     // then
     assertNotNull(result);
+    assertEquals(result.author(), author);
     assertEquals(result.title(), title);
     assertEquals(result.content(), content);
     assertEquals(result.thumbnailUrl(), thumbnailUrl);
@@ -58,6 +60,7 @@ class BlogServiceTest {
   void test_updateBlog(){
     // given
     Long id = 1L;
+    String author = "12";
     String newTitle = "New Title";
     String newContent = "New Content";
     String thumbnailUrl ="https://backend.owl-dev.me/files/substation2.0.png";
@@ -66,7 +69,7 @@ class BlogServiceTest {
     when(blogRepository.save(existingBlog)).thenReturn(existingBlog);
 
     // when
-    BlogVO result = blogService.updateBlog(id, newTitle, newContent, thumbnailUrl);
+    BlogVO result = blogService.updateBlog(id,author, newTitle, newContent, thumbnailUrl);
 
     // then
     assertNotNull(result);
@@ -80,8 +83,8 @@ class BlogServiceTest {
   @Test
   void test_getAllBlogs(){
     // given
-    BlogEntity blog1 = new BlogEntity("Title 1", "Content 1");
-    BlogEntity blog2 = new BlogEntity("Title 2", "Content 2");
+    BlogEntity blog1 = new BlogEntity("1","Title 1", "Content 1");
+    BlogEntity blog2 = new BlogEntity("1","Title 2", "Content 2");
     when(blogRepository.findAll()).thenReturn(Arrays.asList(blog1, blog2));
 
     // when
@@ -97,7 +100,7 @@ class BlogServiceTest {
   void test_publishBlog() {
     // given
     Long id = 1L;
-    BlogEntity blogEntity = new BlogEntity("Title", "Content");
+    BlogEntity blogEntity = new BlogEntity("13","Title", "Content");
     when(blogRepository.findById(id)).thenReturn(Optional.of(blogEntity));
     when(blogRepository.save(blogEntity)).thenReturn(blogEntity);
 
@@ -115,9 +118,10 @@ class BlogServiceTest {
   void test_getBlogById_with_non_published_blog(){
     // given
     Long id =1L;
+    String author = "1";
     String title = "Test Title";
     String content = "Test Content";
-    BlogEntity blog = new BlogEntity(title, content);
+    BlogEntity blog = new BlogEntity(author, title, content);
     when(blogRepository.findById(id)).thenReturn(Optional.of(blog));
 
     // when && then
@@ -130,10 +134,11 @@ class BlogServiceTest {
   void test_getBlogById_with_published_blog(){
     // given
     Long id =1L;
+    String author = "1";
     String title = "Test Title";
     String content = "Test Content";
     int readCount =11;
-    BlogEntity blog = new BlogEntity(title, content);
+    BlogEntity blog = new BlogEntity(author, title, content);
     blog.setReadCount(readCount);
     blog.publish();
     when(blogRepository.findById(id)).thenReturn(Optional.of(blog));

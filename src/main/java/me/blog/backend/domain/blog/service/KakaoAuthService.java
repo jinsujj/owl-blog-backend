@@ -122,7 +122,9 @@ public class KakaoAuthService {
             throw new RuntimeException("User not found");
 
         UserEntity currentUser =  user.get();
-        return new OauthController.UserResponse(currentUser.getUsername(),currentUser.getImageUrl(),currentUser.getEmail());
+        return new OauthController.UserResponse(
+            currentUser.getId(), currentUser.getUsername(),currentUser.getImageUrl(),currentUser.getEmail()
+        );
     }
 
 

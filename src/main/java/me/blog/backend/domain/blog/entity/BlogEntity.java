@@ -44,8 +44,10 @@ public class BlogEntity {
   @Column(name= "published_at", nullable = true)
   private LocalDateTime publishedAt;
   private String thumbnailUrl;
+  private String author;
 
-  public BlogEntity(String title, String content){
+  public BlogEntity(String author, String title, String content){
+   this.author = author;
    this.title = title;
    this.content = content;
    this.readCount = 0;
@@ -54,7 +56,8 @@ public class BlogEntity {
    this.publishedAt = null;
   }
 
-  public BlogEntity(String title, String content, String thumbnailUrl){
+  public BlogEntity(String author, String title, String content, String thumbnailUrl){
+    this.author = author;
     this.title = title;
     this.content = content;
     this.readCount = 0;
