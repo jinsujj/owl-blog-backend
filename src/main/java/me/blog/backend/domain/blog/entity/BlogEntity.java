@@ -2,6 +2,7 @@ package me.blog.backend.domain.blog.entity;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -97,7 +98,9 @@ public class BlogEntity {
   }
 
   public void upLoadThumbnailUrl(String thumbnailUrl) {
-    this.thumbnailUrl = thumbnailUrl;
+    Optional.ofNullable(thumbnailUrl)
+        .filter(url -> !url.isEmpty() && !url.equals(this.thumbnailUrl))
+        .ifPresent(url -> this.thumbnailUrl = url);
   }
 
   public void removeThumbnailUrl() {

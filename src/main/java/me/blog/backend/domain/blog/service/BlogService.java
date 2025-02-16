@@ -35,9 +35,7 @@ public class BlogService {
     blogEntity.setTitle(newTitle);
     blogEntity.setContent(newContent);
     blogEntity.setUpdatedAt(LocalDateTime.now());
-
-    if(!thumbNailUrl.equals(blogEntity.getThumbnailUrl()))
-      blogEntity.upLoadThumbnailUrl(thumbNailUrl);
+    blogEntity.upLoadThumbnailUrl(thumbNailUrl);
 
     return BlogVO.fromEntity(blogRepository.save(blogEntity));
   }
