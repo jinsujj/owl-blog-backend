@@ -28,7 +28,7 @@ public class BlogController {
   @PostMapping
   public ResponseEntity<BlogVO> postBlog(@RequestBody BlogRequest blogRequest) {
     BlogVO blog = blogService.postBlog(
-      blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl
+      blogRequest.blogId, blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl
     );
 
     if(blogRequest.tags != null)
@@ -105,7 +105,7 @@ public class BlogController {
     return ResponseEntity.ok(tagService.getTagByBlogId(id));
   }
 
-  public record BlogRequest(String userId, String title, String content, String thumbnailUrl, List<TagVO> tags) {}
+  public record BlogRequest(String blogId, String userId, String title, String content, String thumbnailUrl, List<TagVO> tags) {}
 
   public record BlogSummary(Long id, String title, String summary, String thumbnailUrl, int readCount, LocalDateTime updatedAt, LocalDateTime publishedAt, TagVO[] tags) {}
 }

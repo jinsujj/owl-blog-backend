@@ -21,8 +21,13 @@ public class BlogService {
   }
 
   @Transactional
-  public BlogVO postBlog(String userId, String title, String content, String thumbnailUrl){
-    BlogEntity blog = new BlogEntity(userId, title, content, thumbnailUrl);
+  public BlogVO postBlog(String blogId, String userId, String title, String content, String thumbnailUrl){
+    if(blogId == null || blogId.isEmpty()){
+      BlogEntity blog = new BlogEntity(userId, title, content, thumbnailUrl);
+      return BlogVO.fromEntity(blogRepository.save(blog));
+    }
+    
+    BlogEntity blog = new BlogEntity(Long.parseLong(blogId), userId, title, content, thumbnailUrl);
     return BlogVO.fromEntity(blogRepository.save(blog));
   }
 

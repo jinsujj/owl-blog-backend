@@ -66,6 +66,16 @@ public class BlogEntity {
     this.thumbnailUrl = thumbnailUrl;
   }
 
+  public BlogEntity(Long id, String author, String title, String content, String thumbnailUrl){
+    this.id = id;
+    this.author = author;
+    this.title = title;
+    this.content = content;
+    this.readCount = 0;
+    this.createdAt = LocalDateTime.now();
+    this.thumbnailUrl = thumbnailUrl;
+  }
+
   public boolean isPublished() {
     return publishedAt != null && publishedAt.isBefore(LocalDateTime.now());
   }
