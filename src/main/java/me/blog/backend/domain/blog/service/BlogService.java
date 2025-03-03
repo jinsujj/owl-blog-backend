@@ -2,6 +2,7 @@ package me.blog.backend.domain.blog.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -21,13 +22,21 @@ public class BlogService {
   }
 
   @Transactional
-  public BlogVO postBlog(String blogId, String userId, String title, String content, String thumbnailUrl){
-    if(blogId == null || blogId.isEmpty()){
-      BlogEntity blog = new BlogEntity(userId, title, content, thumbnailUrl);
-      return BlogVO.fromEntity(blogRepository.save(blog));
+  public BlogVO postBlog(String userId, String title, String content, String thumbnailUrl, String type){
+    if(type != null && !type.isEmpty()) {
+      return handleBlogByType(userId, title, content, thumbnailUrl, type);
     }
-    
-    BlogEntity blog = new BlogEntity(Long.parseLong(blogId), userId, title, content, thumbnailUrl);
+
+    BlogEntity blog = new BlogEntity(userId, title, content, thumbnailUrl);
+    return BlogVO.fromEntity(blogRepository.save(blog));
+  }
+
+  private BlogVO handleBlogByType(String userId, String title, String content, String thumbnailUrl, String type) {
+    Optional<BlogEntity> byType = blogRepository.findByType(type);
+    if(byType.isPresent()) {
+      return updateBlog(byType.get().getId(), userId, title, content, thumbnailUrl);
+    }
+    BlogEntity blog = new BlogEntity(userId, title, content, thumbnailUrl, type);
     return BlogVO.fromEntity(blogRepository.save(blog));
   }
 
@@ -67,6 +76,14 @@ public class BlogService {
 
     blogEntity.readCounting();
     return BlogVO.fromEntity(blogEntity);
+  }
+
+  @Transactional(readOnly = true)
+  public BlogVO getBlogByType(String type) {
+    BlogEntity blog = blogRepository.findByType(type)
+        .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with Type %s not found", type)));
+
+    return BlogVO.fromEntity(blog);
   }
 
   @Transactional

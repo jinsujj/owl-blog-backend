@@ -27,9 +27,7 @@ public class BlogController {
 
   @PostMapping
   public ResponseEntity<BlogVO> postBlog(@RequestBody BlogRequest blogRequest) {
-    BlogVO blog = blogService.postBlog(
-      blogRequest.blogId, blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl
-    );
+    BlogVO blog = blogService.postBlog(blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl, blogRequest.type);
 
     if(blogRequest.tags != null)
       tagService.postTags(blogRequest.tags, blog.id());
@@ -95,6 +93,11 @@ public class BlogController {
     return ResponseEntity.ok(blogService.getBlogById(id));
   }
 
+  @GetMapping("/type/{type}")
+  public ResponseEntity<BlogVO> getBlogsByType(@PathVariable String type) {
+    return ResponseEntity.ok(blogService.getBlogByType(type));
+  }
+
   @GetMapping("/tags")
   public ResponseEntity<TagVO[]> getTagsAll(){
     return ResponseEntity.ok(tagService.getTagsAll());
@@ -105,7 +108,7 @@ public class BlogController {
     return ResponseEntity.ok(tagService.getTagByBlogId(id));
   }
 
-  public record BlogRequest(String blogId, String userId, String title, String content, String thumbnailUrl, List<TagVO> tags) {}
+  public record BlogRequest(String userId, String title, String content, String thumbnailUrl, List<TagVO> tags, String type) {}
 
   public record BlogSummary(Long id, String title, String summary, String thumbnailUrl, int readCount, LocalDateTime updatedAt, LocalDateTime publishedAt, TagVO[] tags) {}
 }

@@ -46,6 +46,7 @@ public class BlogEntity {
   private LocalDateTime publishedAt;
   private String thumbnailUrl;
   private String author;
+  private String type;
 
   public BlogEntity(String author, String title, String content){
    this.author = author;
@@ -64,16 +65,17 @@ public class BlogEntity {
     this.readCount = 0;
     this.createdAt = LocalDateTime.now();
     this.thumbnailUrl = thumbnailUrl;
+    this.type = type;
   }
 
-  public BlogEntity(Long id, String author, String title, String content, String thumbnailUrl){
-    this.id = id;
+  public BlogEntity(String author, String title, String content, String thumbnailUrl, String type){
     this.author = author;
     this.title = title;
     this.content = content;
     this.readCount = 0;
     this.createdAt = LocalDateTime.now();
     this.thumbnailUrl = thumbnailUrl;
+    this.type = type;
   }
 
   public boolean isPublished() {

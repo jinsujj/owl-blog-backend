@@ -45,7 +45,7 @@ class BlogServiceTest {
     when(blogRepository.save(any(BlogEntity.class))).thenReturn(blogEntity);
 
     // when
-    BlogVO result = blogService.postBlog(author,title, content, thumbnailUrl);
+    BlogVO result = blogService.postBlog(author,title, content, thumbnailUrl,"");
 
     // then
     assertNotNull(result);
