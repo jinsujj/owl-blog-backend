@@ -2,6 +2,7 @@ package me.blog.backend.domain.blog.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -86,13 +87,25 @@ public class BlogService {
     return BlogVO.fromEntity(blog);
   }
 
+  @Transactional(readOnly = true)
+  public Map<String, List<BlogVO>> getBlogGroupBySeries(){
+    return null;
+//    return blogRepository.findAll().stream()
+//        .filter(BlogEntity::isPublished)
+//        .filter(p -> p.getSeries().size() != 0)
+//        .collect(Collectors.groupingBy(
+//            BlogEntity::getSeries,
+//            Collectors.mapping(BlogVO::fromEntity, Collectors.toList())
+//        ));
+  }
+
   @Transactional
   public BlogVO publishBlog(Long id){
    BlogEntity blog = blogRepository.findById(id)
        .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
 
    blog.publish();
-   return BlogVO.fromEntity(blogRepository.save(blog));
+   return BlogVO.fromEntity(blog);
   }
 
   @Transactional
@@ -101,6 +114,6 @@ public class BlogService {
        .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
 
    blog.unpublish();
-   return BlogVO.fromEntity(blogRepository.save(blog));
+   return BlogVO.fromEntity(blog);
   }
 }

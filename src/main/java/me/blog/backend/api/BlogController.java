@@ -37,9 +37,7 @@ public class BlogController {
 
   @PutMapping("/{id}")
   public ResponseEntity<BlogVO> updateBlog(@PathVariable Long id, @RequestBody BlogRequest blogRequest) {
-    BlogVO updatedBlog = blogService.updateBlog(
-      id, blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl
-    );
+    BlogVO updatedBlog = blogService.updateBlog(id, blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl);
 
     if(blogRequest.tags != null)
       tagService.updateTags(blogRequest.tags, id);
@@ -87,6 +85,8 @@ public class BlogController {
                     blog.tags()
             )).toList());
   }
+
+
 
   @GetMapping("/{id}")
   public ResponseEntity<BlogVO> getBlogById(@PathVariable Long id) {

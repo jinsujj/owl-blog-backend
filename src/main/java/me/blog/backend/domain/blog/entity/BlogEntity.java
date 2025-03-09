@@ -1,7 +1,9 @@
 package me.blog.backend.domain.blog.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -32,6 +34,10 @@ public class BlogEntity {
 
   @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<BlogTagEntity> blogTags = new HashSet<>();
+
+  @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<BlogSeriesEntity> series = new ArrayList<>();
+
   @Lob
   @Column(columnDefinition = "TEXT")
   private String content;
@@ -44,6 +50,7 @@ public class BlogEntity {
   private LocalDateTime updatedAt;
   @Column(name= "published_at", nullable = true)
   private LocalDateTime publishedAt;
+
   private String thumbnailUrl;
   private String author;
   private String type;
