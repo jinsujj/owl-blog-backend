@@ -1,7 +1,10 @@
 package me.blog.backend.domain.history.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import me.blog.backend.domain.history.entity.GeoLocationEntity;
@@ -17,6 +20,7 @@ public class GeolocationService {
     this.geoLocationRepository = geoLocationRepository;
   }
 
+  @Transactional
   public void saveIPInformation(String ipAddress) {
     String url = API_URL + ipAddress;
     GeoIpResponse result = restTemplate.getForObject(url, GeoIpResponse.class);
@@ -44,6 +48,20 @@ public class GeolocationService {
 
     geoLocationRepository.save(geoLocationEntity);
   }
+
+  @Transactional(readOnly = true)
+  public long getTodayCount(){
+    LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+    LocalDateTime startOfDay = today.atStartOfDay();
+    LocalDateTime endOfDay = today.atTime(23, 59, 59);
+    return geoLocationRepository.countByCreatedAtBetween(startOfDay, endOfDay);
+  }
+
+  @Transactional(readOnly = true)
+  public long getTotalCount(){
+    return geoLocationRepository.count();
+  }
+
 
   public record GeoIpResponse(String query, String status, String continent, String continentCode, String country, String countryCode, String region,
                               String regionName, String city, String district, String zip, String timezone, String isp, String mobile, String proxy,
