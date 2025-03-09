@@ -1,15 +1,20 @@
 package me.blog.backend.domain.blog.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import me.blog.backend.common.exception.BlogNotFoundException;
+import me.blog.backend.domain.blog.entity.BlogSeriesEntity;
+import me.blog.backend.domain.blog.repository.BlogSeriesRepository;
 import me.blog.backend.domain.blog.vo.BlogVO;
 import me.blog.backend.domain.blog.entity.BlogEntity;
 import me.blog.backend.domain.blog.repository.BlogRepository;
@@ -17,9 +22,11 @@ import me.blog.backend.domain.blog.repository.BlogRepository;
 @Service
 public class BlogService {
   private final BlogRepository blogRepository;
+  private final BlogSeriesRepository blogSeriesRepository;
 
-  public BlogService(BlogRepository blogRepository) {
+  public BlogService(BlogRepository blogRepository, BlogSeriesRepository blogSeriesRepository) {
     this.blogRepository = blogRepository;
+    this.blogSeriesRepository = blogSeriesRepository;
   }
 
   @Transactional
@@ -89,14 +96,15 @@ public class BlogService {
 
   @Transactional(readOnly = true)
   public Map<String, List<BlogVO>> getBlogGroupBySeries(){
-    return null;
-//    return blogRepository.findAll().stream()
-//        .filter(BlogEntity::isPublished)
-//        .filter(p -> p.getSeries().size() != 0)
-//        .collect(Collectors.groupingBy(
-//            BlogEntity::getSeries,
-//            Collectors.mapping(BlogVO::fromEntity, Collectors.toList())
-//        ));
+    Map<String, List<BlogVO>> result = new HashMap<>();
+    List<BlogSeriesEntity> blogSeriesEntityList = blogSeriesRepository.findAll(Sort.by(Sort.Direction.ASC, "series_id"));
+    for (BlogSeriesEntity blogSeriesEntity : blogSeriesEntityList) {
+      String key = blogSeriesEntity.getSeries().getName();
+      BlogVO blogVO = BlogVO.fromEntity(blogSeriesEntity.getBlog());
+      result.putIfAbsent(key, new ArrayList<>());
+      result.get(key).add(blogVO);
+    }
+    return result;
   }
 
   @Transactional

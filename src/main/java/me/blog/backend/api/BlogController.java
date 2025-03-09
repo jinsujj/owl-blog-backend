@@ -2,6 +2,7 @@ package me.blog.backend.api;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import me.blog.backend.domain.blog.service.KakaoAuthService;
 import org.springframework.http.ResponseEntity;
@@ -84,6 +85,11 @@ public class BlogController {
                     blog.publishedAt(),
                     blog.tags()
             )).toList());
+  }
+
+  @GetMapping("/series")
+  public ResponseEntity<Map<String, List<BlogVO>>> getBlogsBySeries() {
+    return ResponseEntity.ok(blogService.getBlogGroupBySeries());
   }
 
 
