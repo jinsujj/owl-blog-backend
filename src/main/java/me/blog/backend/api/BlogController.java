@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletRequest;
 import me.blog.backend.domain.blog.service.KakaoAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import me.blog.backend.domain.blog.service.BlogService;
 import me.blog.backend.domain.blog.vo.BlogVO;
 import me.blog.backend.domain.blog.vo.TagVO;
 import me.blog.backend.domain.blog.service.TagService;
+import me.blog.backend.domain.history.service.GeolocationService;
 
 @RestController
 @RequestMapping("/blogs")
@@ -19,11 +21,15 @@ public class BlogController {
   private final BlogService blogService;
   private final TagService tagService;
   private final KakaoAuthService authService;
+  private final HttpServletRequest request;
+  private final GeolocationService geolocationService;
 
-  public BlogController(BlogService blogService, TagService tagService, KakaoAuthService authService) {
+  public BlogController(BlogService blogService, TagService tagService, KakaoAuthService authService, HttpServletRequest request, GeolocationService geolocationService) {
     this.blogService = blogService;
     this.tagService = tagService;
     this.authService = authService;
+    this.request = request;
+    this.geolocationService = geolocationService;
   }
 
   @PostMapping
@@ -96,6 +102,10 @@ public class BlogController {
 
   @GetMapping("/{id}")
   public ResponseEntity<BlogVO> getBlogById(@PathVariable Long id) {
+    String ipAddress = request.getHeader("X-Forwarded-For");
+    if (ipAddress == null || ipAddress.isEmpty())
+      geolocationService.saveIPInformation(request.getRemoteAddr());
+
     return ResponseEntity.ok(blogService.getBlogById(id));
   }
 
