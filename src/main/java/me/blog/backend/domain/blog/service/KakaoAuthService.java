@@ -92,7 +92,7 @@ public class KakaoAuthService {
                     profile.nickname,
                     profile.profileImageUrl,
                     userInfo.kakaoAccount.email,
-                    userInfo.kakaoAccount.email
+                    userInfo.kakaoAccount.gender
             );
             userRepository.save(user);
         } else {
