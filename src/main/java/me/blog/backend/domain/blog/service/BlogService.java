@@ -88,8 +88,21 @@ public class BlogService {
 
   @Transactional(readOnly = true)
   public BlogVO getBlogByType(String type) {
-    BlogEntity blog = blogRepository.findByType(type)
-        .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with Type %s not found", type)));
+    BlogEntity blog = blogRepository.findByType(type).orElse(
+            new BlogEntity("","","""
+            {
+              "blocks": [
+                {
+                  "id": "",
+                  "type": "paragraph",
+                  "data": {
+                    "text": ""
+                  }
+                }
+              ],
+              "version": ""
+            }
+            """));
 
     return BlogVO.fromEntity(blog);
   }
