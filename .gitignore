@@ -49,3 +49,12 @@ application.yml
 /static/uploads/*
 
 image/*
+
+target/
+build/
+*.jar
+*.war
+*.class
+*.log
+.DS_Store
+node_modules/
