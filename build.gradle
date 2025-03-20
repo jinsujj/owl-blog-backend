@@ -47,6 +47,8 @@ dependencies {
     implementation 'software.amazon.awssdk:core:2.20.0'
     // json web token
     implementation 'io.jsonwebtoken:jjwt:0.12.6'
+    // Jsoup
+    implementation 'org.jsoup:jsoup:1.15.4'
 }
 
 tasks.named('test') {
