@@ -62,18 +62,15 @@ public class LoggingAspect {
 
     long elapsedTime = System.currentTimeMillis() - start;
 
-    if(joinPoint.getSignature().getName().contains("getBlogById")){
-      log.info("End Method: {}.{} [execution time={} ms]\n",
-          joinPoint.getSignature().getDeclaringTypeName(),
-          joinPoint.getSignature().getName(),
-          elapsedTime);
-    }
-    else {
-      log.info("End Method: {}.{} [execution time={} ms] result={} \n",
-          joinPoint.getSignature().getDeclaringTypeName(),
-          joinPoint.getSignature().getName(),
-          elapsedTime,
-          toJson(result));
+    String methodName = joinPoint.getSignature().getName();
+    String declaringClass = joinPoint.getSignature().getDeclaringTypeName();
+
+    boolean isBlogFetchMethod = methodName.contains("getBlogById") || methodName.contains("getAllBlogs");
+
+    if (isBlogFetchMethod) {
+      log.info("End Method: {}.{} [execution time={} ms]\n", declaringClass, methodName, elapsedTime);
+    } else {
+      log.info("End Method: {}.{} [execution time={} ms] result={}\n", declaringClass, methodName, elapsedTime, toJson(result));
     }
 
     return result;

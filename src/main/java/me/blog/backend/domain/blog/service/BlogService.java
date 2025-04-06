@@ -77,7 +77,7 @@ public class BlogService {
             .collect(Collectors.toList());
   }
 
-  @Transactional(readOnly = true)
+  @Transactional
   public BlogVO getBlogById(Long id) {
     BlogEntity blogEntity = blogRepository.findById(id)
         .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
