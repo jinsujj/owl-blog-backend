@@ -62,6 +62,15 @@ public class BlogService {
     return BlogVO.fromEntity(blogRepository.save(blogEntity));
   }
 
+  @Transactional
+  public BlogVO updateBlogContent(Long id, String newContent) {
+    BlogEntity blogEntity = blogRepository.findById(id)
+        .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
+
+    blogEntity.setContent(newContent);
+    return BlogVO.fromEntity(blogRepository.save(blogEntity));
+  }
+
   @Transactional(readOnly = true)
   public List<BlogVO> getAllBlogs() {
     return blogRepository.findAll().stream()

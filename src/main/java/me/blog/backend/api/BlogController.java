@@ -52,6 +52,13 @@ public class BlogController {
     return ResponseEntity.ok(updatedBlog);
   }
 
+  @PutMapping("/content/{id}")
+  public ResponseEntity<BlogVO> updateContentBlog(@PathVariable Long id, @RequestBody String content) {
+    BlogVO updatedBlog = blogService.updateBlogContent(id, content);
+
+    return ResponseEntity.ok(updatedBlog);
+  }
+
   @PostMapping("/{id}/publish")
   public ResponseEntity<BlogVO> publishBlog(@PathVariable Long id) {
     BlogVO blog = blogService.publishBlog(id);
