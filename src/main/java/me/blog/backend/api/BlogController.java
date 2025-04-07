@@ -103,7 +103,7 @@ public class BlogController {
   @GetMapping("/{id}")
   public ResponseEntity<BlogVO> getBlogById(@PathVariable Long id) {
     String ipAddress = request.getHeader("X-Forwarded-For");
-    if (ipAddress != null || !ipAddress.isEmpty())
+    if (ipAddress != null && !ipAddress.isEmpty())
       geolocationService.saveIPInformation(request.getRemoteAddr());
 
     return ResponseEntity.ok(blogService.getBlogById(id));
