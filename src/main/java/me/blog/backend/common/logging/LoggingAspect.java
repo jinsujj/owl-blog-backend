@@ -1,5 +1,7 @@
 package me.blog.backend.common.logging;
 
+import java.util.Arrays;
+import java.util.List;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -18,6 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class LoggingAspect {
   private final ObjectMapper objectMapper;
+  private static final List<String> DO_NOT_NEED_DETAILED_LOG_API = Arrays.asList(
+      "getBlogById", "getAllBlogs", "getBlogsBySeries"
+  );
 
   public LoggingAspect() {
     objectMapper = new ObjectMapper();
@@ -64,10 +69,9 @@ public class LoggingAspect {
 
     String methodName = joinPoint.getSignature().getName();
     String declaringClass = joinPoint.getSignature().getDeclaringTypeName();
+    boolean DoNotNeedDetailLogApi = DO_NOT_NEED_DETAILED_LOG_API.stream().anyMatch(methodName::contains);
 
-    boolean isBlogFetchMethod = methodName.contains("getBlogById") || methodName.contains("getAllBlogs");
-
-    if (isBlogFetchMethod) {
+    if (DoNotNeedDetailLogApi) {
       log.info("End Method: {}.{} [execution time={} ms]\n", declaringClass, methodName, elapsedTime);
     } else {
       log.info("End Method: {}.{} [execution time={} ms] result={}\n", declaringClass, methodName, elapsedTime, toJson(result));
