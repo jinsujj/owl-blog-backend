@@ -19,8 +19,11 @@ public class LinkPreviewController {
   @GetMapping
   public ResponseEntity<?> getLinkPreview(@RequestParam("url") String url) {
     try {
-      Document doc = Jsoup.connect(url).get();
+      Document doc = Jsoup.connect(url)
+              .ignoreHttpErrors(true)
+              .get();
 
+      System.out.println(doc.outerHtml());
       String title = doc.title();
 
       String description = "";
