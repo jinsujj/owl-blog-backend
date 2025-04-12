@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LoggingAspect {
   private final ObjectMapper objectMapper;
   private static final List<String> DO_NOT_NEED_DETAILED_LOG_API = Arrays.asList(
-      "getBlogById", "getAllBlogs", "getBlogsBySeries"
+      "getBlogById", "getAllBlogs", "getBlogsBySeries","getBlogsByType"
   );
 
   public LoggingAspect() {
