@@ -5,6 +5,7 @@ import me.blog.backend.domain.blog.entity.BlogSeriesEntity;
 import me.blog.backend.domain.blog.entity.SeriesEntity;
 import me.blog.backend.domain.blog.repository.BlogSeriesRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,9 +24,10 @@ public class BlogSeriesCache extends AbstractCache<BlogSeriesEntity> {
                 .findFirst();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public void putAll() {
-        List<BlogSeriesEntity> blogMaps = blogSeriesRepository.findAll();
+        List<BlogSeriesEntity> blogMaps = blogSeriesRepository.findAllWithRelationsForCache();
         immutableList = List.copyOf(blogMaps);
         isCached = true;
     }
