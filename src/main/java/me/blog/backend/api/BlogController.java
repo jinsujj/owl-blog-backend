@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import me.blog.backend.domain.blog.cache.AbstractCacheManager;
 import me.blog.backend.domain.blog.service.KakaoAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +24,15 @@ public class BlogController {
   private final KakaoAuthService authService;
   private final HttpServletRequest request;
   private final GeolocationService geolocationService;
+  private final AbstractCacheManager cacheManager;
 
-  public BlogController(BlogService blogService, TagService tagService, KakaoAuthService authService, HttpServletRequest request, GeolocationService geolocationService) {
+  public BlogController(BlogService blogService, TagService tagService, KakaoAuthService authService, HttpServletRequest request, GeolocationService geolocationService, AbstractCacheManager cacheManager) {
     this.blogService = blogService;
     this.tagService = tagService;
     this.authService = authService;
     this.request = request;
     this.geolocationService = geolocationService;
+    this.cacheManager = cacheManager;
   }
 
   @PostMapping
@@ -129,6 +132,12 @@ public class BlogController {
   @GetMapping("/{id}/tags")
   public ResponseEntity<TagVO[]> getTagsById(@PathVariable Long id){
     return ResponseEntity.ok(tagService.getTagByBlogId(id));
+  }
+
+  @PostMapping("/caches/refresh")
+  public ResponseEntity<Void> refreshCache(){
+    cacheManager.refreshAllCaches();
+    return ResponseEntity.noContent().build();
   }
 
   public record BlogRequest(String userId, String title, String content, String thumbnailUrl, List<TagVO> tags, String type) {}
