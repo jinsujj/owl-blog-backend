@@ -6,6 +6,7 @@ import me.blog.backend.bounded.context.blog.domain.event.SummaryRequest;
 import me.blog.backend.bounded.context.blog.domain.event.SummaryResult;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.port.in.SummaryUseCase;
+import me.blog.backend.bounded.context.blog.port.out.cache.BlogCachePort;
 import me.blog.backend.bounded.context.blog.port.out.message.BlogEventPublisherPort;
 import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
 import me.blog.backend.common.exception.BlogNotFoundException;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class AiService implements SummaryUseCase {
     private final BlogRepositoryPort blogRepository;
     private final BlogEventPublisherPort eventPublisher;
+    private final BlogCachePort blogCache;
 
     @Override
     public void publishSummary(long blogId){
@@ -47,5 +49,6 @@ public class AiService implements SummaryUseCase {
             .orElseThrow(() -> new BlogNotFoundException(result.blogId().toString() + " not found"));
 
         blog.setSummary(result.summary());
+        blogCache.putAll();
     }
 }
