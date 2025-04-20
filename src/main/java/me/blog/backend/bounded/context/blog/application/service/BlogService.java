@@ -25,6 +25,7 @@ public class BlogService implements BlogUseCase {
   private final BlogSeriesRepositoryPort blogSeriesRepository;
   private final BlogCachePort blogCache;
   private final BlogSeriesCachePort blogSeriesCache;
+  private final AiService aiService;
 
   @Override
   @Transactional
@@ -75,6 +76,7 @@ public class BlogService implements BlogUseCase {
     blogEntity.setContent(newContent);
     BlogEntity savedEntity = blogRepository.save(blogEntity);
     blogCache.putAll();
+    aiService.publishSummary(id);
 
     return BlogVO.fromEntity(savedEntity);
   }
@@ -172,6 +174,8 @@ public class BlogService implements BlogUseCase {
 
    blog.publish();
    blogCache.putAll();
+   aiService.publishSummary(id);
+
    return BlogVO.fromEntity(blog);
   }
 
