@@ -8,10 +8,10 @@ import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogSeriesEntity;
 import me.blog.backend.bounded.context.blog.port.in.BlogUseCase;
-import me.blog.backend.bounded.context.blog.port.out.BlogCachePort;
-import me.blog.backend.bounded.context.blog.port.out.BlogRepositoryPort;
-import me.blog.backend.bounded.context.blog.port.out.BlogSeriesCachePort;
-import me.blog.backend.bounded.context.blog.port.out.BlogSeriesRepositoryPort;
+import me.blog.backend.bounded.context.blog.port.out.cache.BlogCachePort;
+import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
+import me.blog.backend.bounded.context.blog.port.out.cache.BlogSeriesCachePort;
+import me.blog.backend.bounded.context.blog.port.out.repository.BlogSeriesRepositoryPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

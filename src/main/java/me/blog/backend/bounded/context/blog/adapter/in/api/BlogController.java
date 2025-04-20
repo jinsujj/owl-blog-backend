@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.adapter.in.batch.CacheManagerAdapter;
 import me.blog.backend.bounded.context.auth.application.service.KakaoAuthService;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import me.blog.backend.bounded.context.blog.application.service.TagService;
 import me.blog.backend.bounded.context.history.application.service.GeolocationService;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/blogs")
 public class BlogController {
   private final BlogService blogService;
@@ -25,15 +27,6 @@ public class BlogController {
   private final HttpServletRequest request;
   private final GeolocationService geolocationService;
   private final CacheManagerAdapter cacheManager;
-
-  public BlogController(BlogService blogService, TagService tagService, KakaoAuthService authService, HttpServletRequest request, GeolocationService geolocationService, CacheManagerAdapter cacheManager) {
-    this.blogService = blogService;
-    this.tagService = tagService;
-    this.authService = authService;
-    this.request = request;
-    this.geolocationService = geolocationService;
-    this.cacheManager = cacheManager;
-  }
 
   @PostMapping
   public ResponseEntity<BlogVO> postBlog(@RequestBody BlogRequest blogRequest) {

@@ -5,7 +5,7 @@ import me.blog.backend.bounded.context.blog.adapter.out.database.BlogSeriesRepos
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogSeriesEntity;
 import me.blog.backend.bounded.context.blog.domain.model.SeriesEntity;
-import me.blog.backend.bounded.context.blog.port.out.BlogSeriesCachePort;
+import me.blog.backend.bounded.context.blog.port.out.cache.BlogSeriesCachePort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

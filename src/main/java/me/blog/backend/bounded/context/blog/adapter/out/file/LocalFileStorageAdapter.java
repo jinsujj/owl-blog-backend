@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
-import me.blog.backend.bounded.context.blog.port.out.FileStoragePort;
+import me.blog.backend.bounded.context.blog.port.out.file.FileStoragePort;
 import org.springframework.web.multipart.MultipartFile;
 
 import me.blog.backend.common.exception.FileStorageException;

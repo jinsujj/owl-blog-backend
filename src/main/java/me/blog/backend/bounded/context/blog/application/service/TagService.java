@@ -5,9 +5,9 @@ import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.port.in.TagUseCase;
-import me.blog.backend.bounded.context.blog.port.out.BlogRepositoryPort;
-import me.blog.backend.bounded.context.blog.port.out.BlogTagRepositoryPort;
-import me.blog.backend.bounded.context.blog.port.out.TagRepositoryPort;
+import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
+import me.blog.backend.bounded.context.blog.port.out.repository.BlogTagRepositoryPort;
+import me.blog.backend.bounded.context.blog.port.out.repository.TagRepositoryPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

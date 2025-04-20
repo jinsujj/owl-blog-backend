@@ -5,7 +5,7 @@ import me.blog.backend.bounded.context.blog.port.in.FileUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import me.blog.backend.bounded.context.blog.port.out.FileStoragePort;
+import me.blog.backend.bounded.context.blog.port.out.file.FileStoragePort;
 import me.blog.backend.bounded.context.blog.domain.vo.FileUploadResponse;
 
 @Service

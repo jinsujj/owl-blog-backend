@@ -1,4 +1,4 @@
-package me.blog.backend.bounded.context.blog.port.out;
+package me.blog.backend.bounded.context.blog.port.out.cache;
 
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogTagEntity;
@@ -6,8 +6,8 @@ import me.blog.backend.bounded.context.blog.domain.model.TagEntity;
 
 import java.util.List;
 
-public interface BlogTagRepositoryPort {
+public interface BlogTagCachePort {
     List<BlogTagEntity> findByBlog(BlogEntity blog);
     List<BlogTagEntity> findByTag(TagEntity tag);
-    List<BlogTagEntity> findAll();
+    void putAll();
 }

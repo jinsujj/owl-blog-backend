@@ -1,4 +1,4 @@
-package me.blog.backend.bounded.context.blog.port.out;
+package me.blog.backend.bounded.context.blog.port.out.file;
 
 import org.springframework.web.multipart.MultipartFile;
 

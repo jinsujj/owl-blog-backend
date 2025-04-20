@@ -2,7 +2,7 @@ package me.blog.backend.bounded.context.blog.adapter.out.file;
 
 import java.io.IOException;
 
-import me.blog.backend.bounded.context.blog.port.out.FileStoragePort;
+import me.blog.backend.bounded.context.blog.port.out.file.FileStoragePort;
 import org.springframework.web.multipart.MultipartFile;
 
 import me.blog.backend.common.exception.FileStorageException;

@@ -2,7 +2,7 @@ package me.blog.backend.bounded.context.blog.adapter.out.database;
 
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.domain.model.SeriesEntity;
-import me.blog.backend.bounded.context.blog.port.out.SeriesRepositoryPort;
+import me.blog.backend.bounded.context.blog.port.out.repository.SeriesRepositoryPort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

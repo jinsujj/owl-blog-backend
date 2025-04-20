@@ -3,7 +3,7 @@ package me.blog.backend.bounded.context.blog.adapter.out.cache;
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.adapter.out.database.BlogRepositoryAdapter;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
-import me.blog.backend.bounded.context.blog.port.out.BlogCachePort;
+import me.blog.backend.bounded.context.blog.port.out.cache.BlogCachePort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

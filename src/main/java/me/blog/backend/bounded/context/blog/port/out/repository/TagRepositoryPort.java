@@ -1,4 +1,4 @@
-package me.blog.backend.bounded.context.blog.port.out;
+package me.blog.backend.bounded.context.blog.port.out.repository;
 
 import me.blog.backend.bounded.context.blog.domain.model.TagEntity;
 

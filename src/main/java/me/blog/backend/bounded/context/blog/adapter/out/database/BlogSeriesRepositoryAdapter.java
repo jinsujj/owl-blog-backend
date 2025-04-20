@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogSeriesEntity;
 import me.blog.backend.bounded.context.blog.domain.model.SeriesEntity;
-import me.blog.backend.bounded.context.blog.port.out.BlogSeriesRepositoryPort;
+import me.blog.backend.bounded.context.blog.port.out.repository.BlogSeriesRepositoryPort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

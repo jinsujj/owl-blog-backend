@@ -5,8 +5,7 @@ import me.blog.backend.bounded.context.blog.adapter.out.database.BlogTagReposito
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogTagEntity;
 import me.blog.backend.bounded.context.blog.domain.model.TagEntity;
-import me.blog.backend.bounded.context.blog.adapter.out.database.BlogTagRepository;
-import me.blog.backend.bounded.context.blog.port.out.BlogTagCachePort;
+import me.blog.backend.bounded.context.blog.port.out.cache.BlogTagCachePort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

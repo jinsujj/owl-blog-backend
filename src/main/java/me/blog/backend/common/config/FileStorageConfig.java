@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import me.blog.backend.bounded.context.blog.port.out.FileStoragePort;
+import me.blog.backend.bounded.context.blog.port.out.file.FileStoragePort;
 import me.blog.backend.bounded.context.blog.adapter.out.file.FileStorageProperties;
 import me.blog.backend.bounded.context.blog.adapter.out.file.LocalFileStorageAdapter;
 import me.blog.backend.bounded.context.blog.adapter.out.file.S3FileStorageAdapter;
