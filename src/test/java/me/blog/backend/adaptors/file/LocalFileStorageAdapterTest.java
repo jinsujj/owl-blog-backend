@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import me.blog.backend.bounded.context.blog.adapter.out.file.FileStorageProperties;
+import me.blog.backend.bounded.context.blog.adapter.out.file.LocalFileStorageAdapter;
 import org.springframework.web.multipart.MultipartFile;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -14,7 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import me.blog.backend.common.exception.FileStorageException;
-import me.blog.backend.domain.blog.vo.FileUploadResponse;
+import me.blog.backend.bounded.context.blog.domain.vo.FileUploadResponse;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

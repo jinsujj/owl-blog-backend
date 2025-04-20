@@ -4,10 +4,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import me.blog.backend.adaptors.file.FileStoragePort;
-import me.blog.backend.adaptors.file.FileStorageProperties;
-import me.blog.backend.adaptors.file.LocalFileStorageAdapter;
-import me.blog.backend.adaptors.file.S3FileStorageAdapter;
+import me.blog.backend.bounded.context.blog.port.out.FileStoragePort;
+import me.blog.backend.bounded.context.blog.adapter.out.file.FileStorageProperties;
+import me.blog.backend.bounded.context.blog.adapter.out.file.LocalFileStorageAdapter;
+import me.blog.backend.bounded.context.blog.adapter.out.file.S3FileStorageAdapter;
 import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration

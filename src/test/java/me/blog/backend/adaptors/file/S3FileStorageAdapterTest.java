@@ -1,6 +1,9 @@
 package me.blog.backend.adaptors.file;
 
 import java.io.IOException;
+
+import me.blog.backend.bounded.context.blog.adapter.out.file.FileStorageProperties;
+import me.blog.backend.bounded.context.blog.adapter.out.file.S3FileStorageAdapter;
 import org.springframework.web.multipart.MultipartFile;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -10,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import me.blog.backend.common.exception.FileStorageException;
-import me.blog.backend.domain.blog.vo.FileUploadResponse;
+import me.blog.backend.bounded.context.blog.domain.vo.FileUploadResponse;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;

@@ -30,7 +30,7 @@ public class LoggingAspect {
   }
 
   // api layer logging
-  @Pointcut("execution(* me.blog.backend.api..*(..))")
+  @Pointcut("execution(* me.blog.backend.bounded.context.blog.adapter.in.api..*(..))")
   public void controllerMethods(){}
 
 
