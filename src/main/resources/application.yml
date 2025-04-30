@@ -23,6 +23,8 @@ spring:
   h2:
     console:
       enabled: true
+server:
+    forward-headers-strategy: native
 
 jwt:
   secret:
