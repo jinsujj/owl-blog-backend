@@ -105,18 +105,24 @@ public class BlogController {
 
   @GetMapping("/{id}")
   public ResponseEntity<BlogVO> getBlogById(@PathVariable Long id) {
+    saveVisitorIpHistory();
+    return ResponseEntity.ok(blogService.getBlogById(id));
+  }
+
+  private void saveVisitorIpHistory() {
     String ipAddress = request.getHeader("X-Forwarded-For");
     String remoteAddr = request.getRemoteAddr();
 
     System.out.println("X-Forwarded-For: " + ipAddress);
     System.out.println("RemoteAddr: " + remoteAddr);
 
-    if (ipAddress != null && !ipAddress.isEmpty()) {
-      String clientIp = ipAddress.split(",")[0].trim();
-      geolocationService.saveIPInformation(clientIp);
-    }
+    String clientIp = (ipAddress != null && !ipAddress.isEmpty())
+            ? ipAddress.split(",")[0].trim()
+            : remoteAddr;
 
-    return ResponseEntity.ok(blogService.getBlogById(id));
+    System.out.println("Client IP: " + clientIp);
+
+    geolocationService.saveIPInformation(clientIp);
   }
 
   @GetMapping("/type/{type}")
