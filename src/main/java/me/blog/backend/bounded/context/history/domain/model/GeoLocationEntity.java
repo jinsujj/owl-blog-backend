@@ -45,27 +45,4 @@ public class GeoLocationEntity {
   @Column(name = "created_at")
   private LocalDateTime createdAt;
 
-  public GeoLocationEntity(String query, String status, String continent, String continentCode, String country, String countryCode,
-      String region, String regionName, String city, String district, String zip, String timezone, String isp,
-      String mobile, String proxy, String hosting, String lat, String lon) {
-    this.query = query;
-    this.status = status;
-    this.continent = continent;
-    this.continentCode = continentCode;
-    this.country = country;
-    this.countryCode = countryCode;
-    this.region = region;
-    this.regionName = regionName;
-    this.city = city;
-    this.district = district;
-    this.zip = zip;
-    this.timezone = timezone;
-    this.isp = isp;
-    this.mobile = mobile;
-    this.proxy = proxy;
-    this.hosting = hosting;
-    this.lat = lat;
-    this.lon = lon;
-    createdAt = LocalDateTime.now();
-  }
 }

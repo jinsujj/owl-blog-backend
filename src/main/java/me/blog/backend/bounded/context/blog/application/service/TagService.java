@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
-import me.blog.backend.bounded.context.blog.port.in.TagUseCase;
+import me.blog.backend.bounded.context.blog.port.in.service.TagUseCase;
 import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
 import me.blog.backend.bounded.context.blog.port.out.repository.BlogTagRepositoryPort;
 import me.blog.backend.bounded.context.blog.port.out.repository.TagRepositoryPort;

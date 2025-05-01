@@ -1,4 +1,4 @@
-package me.blog.backend.bounded.context.blog.port.in;
+package me.blog.backend.bounded.context.blog.port.in.service;
 
 import me.blog.backend.bounded.context.blog.domain.event.SummaryResult;
 

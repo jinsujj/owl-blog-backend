@@ -1,7 +1,7 @@
 package me.blog.backend.bounded.context.blog.application.service;
 
 import lombok.RequiredArgsConstructor;
-import me.blog.backend.bounded.context.blog.port.in.FileUseCase;
+import me.blog.backend.bounded.context.blog.port.in.service.FileUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -5,8 +5,6 @@ import me.blog.backend.bounded.context.blog.adapter.out.cache.AbstractCache;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 
 @Slf4j

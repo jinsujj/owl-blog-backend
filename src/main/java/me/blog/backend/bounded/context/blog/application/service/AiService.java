@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import me.blog.backend.bounded.context.blog.domain.event.SummaryRequest;
 import me.blog.backend.bounded.context.blog.domain.event.SummaryResult;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
-import me.blog.backend.bounded.context.blog.port.in.SummaryUseCase;
+import me.blog.backend.bounded.context.blog.port.in.service.SummaryUseCase;
 import me.blog.backend.bounded.context.blog.port.out.cache.BlogCachePort;
-import me.blog.backend.bounded.context.blog.port.out.message.BlogEventPublisherPort;
+import me.blog.backend.bounded.context.blog.port.out.message.BlogSummaryPublisherPort;
 import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
 import me.blog.backend.common.exception.BlogNotFoundException;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AiService implements SummaryUseCase {
     private final BlogRepositoryPort blogRepository;
-    private final BlogEventPublisherPort eventPublisher;
+    private final BlogSummaryPublisherPort eventPublisher;
     private final BlogCachePort blogCache;
 
     @Override

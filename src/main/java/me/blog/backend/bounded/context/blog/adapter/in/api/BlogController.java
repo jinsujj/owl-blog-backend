@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.adapter.in.batch.CacheManagerAdapter;
 import me.blog.backend.bounded.context.auth.application.service.KakaoAuthService;
+import me.blog.backend.bounded.context.blog.adapter.out.message.BlogVisitorPublisherAdapter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class BlogController {
   private final HttpServletRequest request;
   private final GeolocationService geolocationService;
   private final CacheManagerAdapter cacheManager;
+  private final BlogVisitorPublisherAdapter blogVisitorPublisherAdapter;
 
   @PostMapping
   public ResponseEntity<BlogVO> postBlog(@RequestBody BlogRequest blogRequest) {
@@ -112,18 +114,18 @@ public class BlogController {
   private void saveVisitorIpHistory() {
     String ipAddress = request.getHeader("X-Forwarded-For");
     String remoteAddr = request.getRemoteAddr();
-
-    System.out.println("X-Forwarded-For: " + ipAddress);
-    System.out.println("RemoteAddr: " + remoteAddr);
-
     String clientIp = (ipAddress != null && !ipAddress.isEmpty())
             ? ipAddress.split(",")[0].trim()
             : remoteAddr;
 
-    System.out.println("Client IP: " + clientIp);
+    System.out.printf(
+            "[Visitor IP] X-Forwarded-For: %s | RemoteAddr: %s | FinalClientIp: %s%n",
+            ipAddress, remoteAddr, clientIp
+    );
 
-    geolocationService.saveIPInformation(clientIp);
+    blogVisitorPublisherAdapter.publish(clientIp);
   }
+
 
   @GetMapping("/type/{type}")
   public ResponseEntity<BlogVO> getBlogsByType(@PathVariable String type) {

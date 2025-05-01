@@ -7,7 +7,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogSeriesEntity;
-import me.blog.backend.bounded.context.blog.port.in.SeriesUseCase;
+import me.blog.backend.bounded.context.blog.port.in.service.SeriesUseCase;
 import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
 import me.blog.backend.bounded.context.blog.port.out.repository.BlogSeriesRepositoryPort;
 import me.blog.backend.bounded.context.blog.port.out.repository.SeriesRepositoryPort;

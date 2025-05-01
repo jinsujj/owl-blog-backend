@@ -23,12 +23,15 @@ spring:
   h2:
     console:
       enabled: true
+  kafka:
+    bootstrap-servers:
+
 server:
     forward-headers-strategy: native
 
 jwt:
   secret:
-  expiration:
+  expiration: 86400000
 
 kakao:
   client-id:
