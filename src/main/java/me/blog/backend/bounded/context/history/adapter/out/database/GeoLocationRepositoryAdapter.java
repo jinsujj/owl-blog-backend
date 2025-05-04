@@ -6,6 +6,7 @@ import me.blog.backend.bounded.context.history.port.out.GeoLocationRepositoryPor
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -15,6 +16,11 @@ public class GeoLocationRepositoryAdapter implements GeoLocationRepositoryPort {
     @Override
     public long countByCreatedAtBetween(LocalDateTime from, LocalDateTime to) {
         return geoLocationRepository.countByCreatedAtBetween(from, to);
+    }
+
+    @Override
+    public List<GeoLocationEntity> getByCreatedAtBetween(LocalDateTime from, LocalDateTime to) {
+        return geoLocationRepository.findByCreatedAtBetween(from, to);
     }
 
     @Override
