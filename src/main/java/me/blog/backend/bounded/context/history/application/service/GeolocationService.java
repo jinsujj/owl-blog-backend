@@ -30,7 +30,7 @@ public class GeolocationService implements historyUseCase {
 
   @Override
   @Transactional
-  public void saveIPInformation(String ipAddress, LocalDateTime createdTime) {
+  public void saveIPInformation(String ipAddress, String blogId, LocalDateTime createdTime) {
     String url = API_URL + ipAddress;
     GeoIpResponseVO result = restTemplate.getForObject(url, GeoIpResponseVO.class);
     GeoLocationEntity geoLocationEntity = GeoLocationEntity.builder()
@@ -53,6 +53,7 @@ public class GeolocationService implements historyUseCase {
         .lat(result.lat())
         .lon(result.lon())
         .createdAt(createdTime)
+        .blogId(Long.valueOf(blogId))
         .build();
 
     geoLocationRepository.save(geoLocationEntity);

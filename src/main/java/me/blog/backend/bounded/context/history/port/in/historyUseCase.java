@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface historyUseCase {
-    void saveIPInformation(String ipAddress, LocalDateTime createdAt);
+    void saveIPInformation(String ipAddress, String blogId, LocalDateTime createdAt);
     long getTodayCount();
     long getTotalCount();
     List<CoordinateVO> getCoordinatesHistory(LocalDate from, LocalDate to);

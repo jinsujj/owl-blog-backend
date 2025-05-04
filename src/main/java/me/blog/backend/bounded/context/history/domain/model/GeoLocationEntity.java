@@ -24,6 +24,7 @@ public class GeoLocationEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
+  private Long blogId;
   private String query;
   private String status;
   private String continent;

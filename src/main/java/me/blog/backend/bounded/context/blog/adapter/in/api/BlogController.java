@@ -107,11 +107,11 @@ public class BlogController {
 
   @GetMapping("/{id}")
   public ResponseEntity<BlogVO> getBlogById(@PathVariable Long id) {
-    saveVisitorIpHistory();
+    saveVisitorIpHistory(String.valueOf(id));
     return ResponseEntity.ok(blogService.getBlogById(id));
   }
 
-  private void saveVisitorIpHistory() {
+  private void saveVisitorIpHistory(String blogId) {
     String ipAddress = request.getHeader("X-Forwarded-For");
     String remoteAddr = request.getRemoteAddr();
     String clientIp = (ipAddress != null && !ipAddress.isEmpty())
@@ -123,7 +123,7 @@ public class BlogController {
             ipAddress, remoteAddr, clientIp
     );
 
-    blogVisitorPublisherAdapter.publish(clientIp);
+    blogVisitorPublisherAdapter.publish(clientIp, blogId);
   }
 
 

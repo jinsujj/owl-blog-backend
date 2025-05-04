@@ -22,11 +22,12 @@ public class BlogVisitorPublisherAdapter implements BlogVisitorPublisherPort {
     private final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
-    public void publish(String ipAddress) {
+    public void publish(String ipAddress, String blogId) {
         Map<String, String> payload = new HashMap<>();
         String timestamp = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(TIMESTAMP_FORMATTER);
 
         payload.put("ipAddress", ipAddress);
+        payload.put("blogId", blogId);
         payload.put("timestamp", timestamp);
 
         try {
