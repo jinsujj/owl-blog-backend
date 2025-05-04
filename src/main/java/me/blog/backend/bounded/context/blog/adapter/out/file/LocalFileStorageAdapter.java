@@ -25,25 +25,40 @@ public class LocalFileStorageAdapter implements FileStoragePort {
     if(file.isEmpty())
       throw new FileStorageException("file is Empty");
 
+    String uploadDir     = fileStorageProperties.getUploadDir();
+    Path directoryPath = Paths.get(uploadDir);
+
     try{
       // create directory
-      String uploadDir = fileStorageProperties.getUploadDir();
-      Path directoryPath = Paths.get(uploadDir);
-
       if(!Files.exists(directoryPath))
         Files.createDirectories(directoryPath);
 
-
-      // save file
-      String fileName = Objects.requireNonNull(file.getOriginalFilename(), "file name is null")
+      // splitting the original filename and extension
+      String originalName = Objects.requireNonNull(file.getOriginalFilename(), "file name is null")
               .replace(' ', '_');
 
-      Path filePath = directoryPath.resolve(fileName);
+      int dotIdx = originalName.lastIndexOf('.');
+      String baseName = (dotIdx == -1) ? originalName : originalName.substring(0, dotIdx);
+      String ext      = (dotIdx == -1) ? ""           : originalName.substring(dotIdx); // ".png"
+
+      // incrementing the version number on conflict
+      Path filePath = directoryPath.resolve(originalName);
+      int index = 1;
+
+      while (Files.exists(filePath)) {
+        String candidate = baseName + "(" + index + ")" + ext;
+        filePath = directoryPath.resolve(candidate);
+        index++;
+      }
+
+      // file save
       try (InputStream inputStream = file.getInputStream()) {
         Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
       }
 
-      return new FileUploadResponse(fileStorageProperties.getBaseUrl() +"/"+ fileName);
+      // response image path url
+      String fileUrl = fileStorageProperties.getBaseUrl() + "/" + filePath.getFileName();
+      return new FileUploadResponse(fileUrl);
     }
     catch (IOException e){
       throw new FileStorageException("unexpected error happened during upload "+ e.getMessage());
