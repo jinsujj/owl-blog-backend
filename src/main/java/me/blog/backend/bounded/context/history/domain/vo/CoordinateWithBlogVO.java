@@ -3,7 +3,7 @@ package me.blog.backend.bounded.context.history.domain.vo;
 import java.time.LocalDateTime;
 
 public record CoordinateWithBlogVO(
-        String BlogTitle,
+        String blogTitle,
         Long blogId,
         String country,
         String city,
