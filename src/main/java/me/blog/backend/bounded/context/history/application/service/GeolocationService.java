@@ -2,13 +2,15 @@ package me.blog.backend.bounded.context.history.application.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
+import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
+import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
 import me.blog.backend.bounded.context.history.domain.model.GeoLocationEntity;
-import me.blog.backend.bounded.context.history.domain.vo.CoordinateVO;
+import me.blog.backend.bounded.context.history.domain.vo.CoordinateWithBlogVO;
 import me.blog.backend.bounded.context.history.domain.vo.GeoIpResponseVO;
 import me.blog.backend.bounded.context.history.port.in.historyUseCase;
 import me.blog.backend.bounded.context.history.port.out.GeoLocationRepositoryPort;
@@ -16,23 +18,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import static me.blog.backend.bounded.context.history.domain.vo.CoordinateVO.fromEntity;
-
 @Service
+@RequiredArgsConstructor
 public class GeolocationService implements historyUseCase {
   private final GeoLocationRepositoryPort geoLocationRepository;
+  private final BlogRepositoryPort blogRepositoryPort;
   private final RestTemplate restTemplate = new RestTemplate();
   private final static String API_URL = "http://ip-api.com/json/";
 
-  public GeolocationService(GeoLocationRepositoryPort geoLocationRepository) {
-    this.geoLocationRepository = geoLocationRepository;
-  }
 
   @Override
   @Transactional
   public void saveIPInformation(String ipAddress, String blogId, LocalDateTime createdTime) {
     String url = API_URL + ipAddress;
     GeoIpResponseVO result = restTemplate.getForObject(url, GeoIpResponseVO.class);
+    BlogEntity blog = blogRepositoryPort.findById(Long.parseLong(blogId)).orElse(null);
+
     GeoLocationEntity geoLocationEntity = GeoLocationEntity.builder()
         .query(result.query())
         .status(result.status())
@@ -53,21 +54,21 @@ public class GeolocationService implements historyUseCase {
         .lat(result.lat())
         .lon(result.lon())
         .createdAt(createdTime)
-        .blogId(Long.valueOf(blogId))
+        .blog(blog)
         .build();
 
     geoLocationRepository.save(geoLocationEntity);
   }
 
   @Override
-  public List<CoordinateVO> getCoordinatesHistory(LocalDate from, LocalDate to) {
-    List<GeoLocationEntity> geoLocationEntityList = geoLocationRepository.getByCreatedAtBetween(from.atStartOfDay(), to.atTime(LocalTime.MAX));
-    List<CoordinateVO> result = new ArrayList<>();
+  public List<CoordinateWithBlogVO> getCoordinatesHistoryWithAIpAddress(LocalDate from, LocalDate to, String ipAddress) {
+    List<CoordinateWithBlogVO> historyWithIpList= geoLocationRepository.getCoordinatesHistoryWithAIpAddress(from, to, ipAddress);
+    List <CoordinateWithBlogVO> result = new ArrayList<>();
 
-    for(GeoLocationEntity geoLocationEntity : geoLocationEntityList) {
-      if (geoLocationEntity.getCountry() == null) continue;
+    for(CoordinateWithBlogVO coordinateWithBlogVO : historyWithIpList) {
+      if(coordinateWithBlogVO.country() == null) continue;
 
-      result.add(fromEntity(geoLocationEntity));
+      result.add(coordinateWithBlogVO);
     }
 
     return result;

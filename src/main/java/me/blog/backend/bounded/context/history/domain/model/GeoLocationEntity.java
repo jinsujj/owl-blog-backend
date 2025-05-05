@@ -2,17 +2,13 @@ package me.blog.backend.bounded.context.history.domain.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 
 @Entity
 @Getter
@@ -24,7 +20,9 @@ public class GeoLocationEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  private Long blogId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name ="blog_id")
+  private BlogEntity blog;
   private String query;
   private String status;
   private String continent;

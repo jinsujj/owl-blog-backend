@@ -23,6 +23,20 @@ repositories {
     mavenCentral()
 }
 
+def querydslDir = "$buildDir/generated/querydsl"
+
+sourceSets {
+    main {
+        java {
+            srcDirs += querydslDir
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -54,6 +68,11 @@ dependencies {
     // Json
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    // QueryDSL
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+    annotationProcessor("com.querydsl:querydsl-apt:5.0.0:jakarta")
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api:3.1.0")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api:2.1.1")
 }
 
 tasks.named('test') {
