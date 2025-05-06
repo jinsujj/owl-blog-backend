@@ -1,8 +1,8 @@
 package me.blog.backend.common.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import me.blog.backend.bounded.context.blog.port.out.file.FileStoragePort;
 import me.blog.backend.bounded.context.blog.adapter.out.file.FileStorageProperties;
@@ -13,16 +13,16 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Configuration
 public class FileStorageConfig {
   /*
-     determined by application.yml 'spring.profiles.active' value
+     determined by application.yml 'file.storage.type' value
   */
   @Bean
-  @Profile("local")
+  @ConditionalOnProperty(name = "file.storage.type", havingValue = "local")
   public FileStoragePort localFileStorageAdapter(FileStorageProperties fileStorageProperties) {
     return new LocalFileStorageAdapter(fileStorageProperties);
   }
 
   @Bean
-  @Profile("s3")
+  @ConditionalOnProperty(name = "file.storage.type", havingValue = "s3")
   public FileStoragePort s3FileStorageAdapter(S3Client s3Client, FileStorageProperties fileStorageProperties) {
     return new S3FileStorageAdapter(s3Client, fileStorageProperties);
   }

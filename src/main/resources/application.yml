@@ -43,6 +43,8 @@ file:
   base-url: http://localhost:8080/images
   s3-bucket: your-s3-bucket-name
   s3-base-url: https://your-s3-bucket-name.s3.amazonaws.com
+  storage:
+    type: local
 
 springdoc:
   swagger-ui:
