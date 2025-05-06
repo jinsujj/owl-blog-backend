@@ -20,4 +20,5 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 
 # 8. 컨테이너에서 실행할 명령
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
+
