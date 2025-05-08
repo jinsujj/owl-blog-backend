@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
-import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
 import me.blog.backend.bounded.context.history.domain.model.GeoLocationEntity;
 import me.blog.backend.bounded.context.history.domain.vo.CoordinateWithBlogVO;
 import me.blog.backend.bounded.context.history.domain.vo.GeoIpResponseVO;
@@ -22,17 +20,15 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class GeolocationService implements historyUseCase {
   private final GeoLocationRepositoryPort geoLocationRepository;
-  private final BlogRepositoryPort blogRepositoryPort;
   private final RestTemplate restTemplate = new RestTemplate();
   private final static String API_URL = "http://ip-api.com/json/";
 
 
   @Override
   @Transactional
-  public void saveIPInformation(String ipAddress, String blogId, LocalDateTime createdTime) {
+  public void saveIPInformation(String ipAddress, Long blogId, LocalDateTime createdTime) {
     String url = API_URL + ipAddress;
     GeoIpResponseVO result = restTemplate.getForObject(url, GeoIpResponseVO.class);
-    BlogEntity blog = blogRepositoryPort.findById(Long.parseLong(blogId)).orElse(null);
 
     GeoLocationEntity geoLocationEntity = GeoLocationEntity.builder()
         .query(result.query())
@@ -54,7 +50,7 @@ public class GeolocationService implements historyUseCase {
         .lat(result.lat())
         .lon(result.lon())
         .createdAt(createdTime)
-        .blog(blog)
+        .blog_id(blogId)
         .build();
 
     geoLocationRepository.save(geoLocationEntity);

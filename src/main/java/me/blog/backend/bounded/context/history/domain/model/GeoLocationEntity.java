@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 
 @Entity
 @Getter
@@ -20,9 +19,7 @@ public class GeoLocationEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name ="blog_id")
-  private BlogEntity blog;
+  private Long blog_id;
   private String query;
   private String status;
   private String continent;

@@ -1,24 +1,25 @@
 package me.blog.backend.bounded.context.history.adapter.out.database;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import me.blog.backend.bounded.context.blog.domain.model.QBlogEntity;
+import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
+import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
 import me.blog.backend.bounded.context.history.domain.model.GeoLocationEntity;
-import me.blog.backend.bounded.context.history.domain.model.QGeoLocationEntity;
 import me.blog.backend.bounded.context.history.domain.vo.CoordinateWithBlogVO;
 import me.blog.backend.bounded.context.history.port.out.GeoLocationRepositoryPort;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 public class GeoLocationRepositoryAdapter implements GeoLocationRepositoryPort {
     private final GeoLocationRepository geoLocationRepository;
+    private final BlogRepositoryPort blogRepository;
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -33,34 +34,52 @@ public class GeoLocationRepositoryAdapter implements GeoLocationRepositoryPort {
 
     @Override
     public List<CoordinateWithBlogVO> getCoordinatesHistoryWithAIpAddress(LocalDate from, LocalDate to, String ipAddress) {
-        QGeoLocationEntity geoLocation = QGeoLocationEntity.geoLocationEntity;
-        QBlogEntity blog = QBlogEntity.blogEntity;
+        List<GeoLocationEntity> geoLocationEntityList;
+        if (ipAddress == null || ipAddress.isEmpty()) {
+            geoLocationEntityList = geoLocationRepository.findByCreatedAtBetweenOrderByQueryAsc(
+                    from.atStartOfDay(), to.plusDays(1).atStartOfDay());
+        }
+        else {
+            geoLocationEntityList = geoLocationRepository.findByCreatedAtBetweenAndQueryOrderByQueryAsc(
+                    from.atStartOfDay(), to.plusDays(1).atStartOfDay(), ipAddress);
+        }
+        return transferToDTO(geoLocationEntityList);
+    }
 
-        BooleanBuilder builder = new BooleanBuilder();
+    private List<CoordinateWithBlogVO> transferToDTO(List<GeoLocationEntity> geoLocationEntityList) {
+        List<CoordinateWithBlogVO> result = new ArrayList<>();
+        for (GeoLocationEntity geoLocation : geoLocationEntityList) {
+            Long blogId = geoLocation.getBlog_id();
+            if (blogId == null) continue;
 
-        builder.and(geoLocation.createdAt.between(from.atStartOfDay(), to.plusDays(1).atStartOfDay()));
-
-        // ipAddress is Optional
-        if (ipAddress != null && !ipAddress.isBlank())
-            builder.and(geoLocation.query.eq(ipAddress));
-
-        return queryFactory.select(
-                Projections.constructor(
-                        CoordinateWithBlogVO.class,
-                        blog.title,
-                        blog.id,
-                        geoLocation.country,
-                        geoLocation.city,
-                        geoLocation.query,
-                        geoLocation.createdAt,
-                        geoLocation.lat,
-                        geoLocation.lon
-                ))
-                .from(geoLocation)
-                .leftJoin(geoLocation.blog, blog)
-                .where(builder)
-                .orderBy(geoLocation.id.desc())
-                .fetch();
+            Optional<BlogEntity> blogEntity = blogRepository.findById(blogId);
+            if(blogEntity.isPresent()){
+                BlogEntity blog = blogEntity.get();
+                result.add(new CoordinateWithBlogVO(
+                    blog.getTitle(),
+                    blog.getId(),
+                    geoLocation.getCountry(),
+                    geoLocation.getCity(),
+                    geoLocation.getQuery(),
+                    geoLocation.getCreatedAt(),
+                    geoLocation.getLat(),
+                    geoLocation.getLon()
+                ));
+            }
+            else {
+                result.add(new CoordinateWithBlogVO(
+                    "",
+                    geoLocation.getBlog_id(),
+                    geoLocation.getCountry(),
+                    geoLocation.getCity(),
+                    geoLocation.getQuery(),
+                    geoLocation.getCreatedAt(),
+                    geoLocation.getLat(),
+                    geoLocation.getLon()
+                ));
+            }
+        }
+        return result;
     }
 
 

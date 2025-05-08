@@ -30,7 +30,7 @@ public class BlogVisitorConsumerAdapter implements BlogVisitorConsumerPort {
             JsonNode jsonNode = objectMapper.readTree(message);
             String ipAddress = jsonNode.get("ipAddress").asText();
             String timestamp = jsonNode.get("timestamp").asText();
-            String blogId = jsonNode.get("blogId").asText();
+            Long blogId = Long.parseLong(jsonNode.get("blogId").asText());
             LocalDateTime createdTime = LocalDateTime.parse(timestamp, TIMESTAMP_FORMATTER);
 
             log.info("Received IP visit: ipAddress={}, timestamp={}", ipAddress, createdTime);
