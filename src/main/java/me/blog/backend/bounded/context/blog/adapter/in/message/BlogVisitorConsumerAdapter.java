@@ -33,6 +33,9 @@ public class BlogVisitorConsumerAdapter implements BlogVisitorConsumerPort {
             Long blogId = Long.parseLong(jsonNode.get("blogId").asText());
             LocalDateTime createdTime = LocalDateTime.parse(timestamp, TIMESTAMP_FORMATTER);
 
+            if(ipAddress != null && ipAddress.startsWith("192"))
+                return;
+
             log.info("Received IP visit: ipAddress={}, timestamp={}", ipAddress, createdTime);
             geolocationService.saveIPInformation(ipAddress, blogId, createdTime);
         }

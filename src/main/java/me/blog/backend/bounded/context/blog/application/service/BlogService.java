@@ -116,7 +116,9 @@ public class BlogService implements BlogUseCase {
         .orElseThrow(() -> new BlogNotFoundException("Blog with ID %s not found".formatted(id)))
       );
 
-    blogRepository.incrementReadCount(id);
+    if(blogEntity.isPublished()) {
+      blogEntity.readCounting();
+    }
     return BlogVO.fromEntity(blogEntity);
   }
 
