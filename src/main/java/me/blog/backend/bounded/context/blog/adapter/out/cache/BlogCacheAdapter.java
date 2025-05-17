@@ -52,13 +52,13 @@ public class BlogCacheAdapter extends RedisAbstractCache<BlogVO> implements Blog
     // custom method
     public List<BlogVO> findByAuthor(String author) {
         return findAll().stream()
-            .filter(blog -> blog.author().equals(author))
+            .filter(blog -> blog.author() != null && blog.author().equals(author))
             .toList();
     }
 
     public Optional<BlogVO> findByType(String type) {
         return findAll().stream()
-            .filter(blog -> blog.type().equals(type))
+            .filter(blog -> blog.type() != null && blog.type().equals(type))
             .findFirst();
     }
 }

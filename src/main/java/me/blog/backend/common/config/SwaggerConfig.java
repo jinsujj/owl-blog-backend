@@ -17,16 +17,16 @@ public class SwaggerConfig {
   public OpenAPI customOpenAPI() {
     return new OpenAPI()
             .servers(Arrays.asList(
-                    new Server()
-                            .url("http://localhost:8080")
-                            .description("Local Development Server"),
-                    new Server()
-                            .url("https://backend.owl-dev.me")
-                            .description("Production Server")
+              new Server()
+                .url("http://localhost:8080")
+                .description("Local Development Server"),
+              new Server()
+                .url("https://backend.owl-dev.me")
+                .description("Production Server")
             ))
             .info(new Info()
-                    .title("Owl Blog Backend API")
-                    .version("1.0.0")
+                .title("Owl Blog Backend API")
+                .version("1.0.0")
             );
   }
 }
