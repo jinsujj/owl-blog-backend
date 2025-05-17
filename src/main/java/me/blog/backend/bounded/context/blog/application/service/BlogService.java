@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogSeriesEntity;
+import me.blog.backend.bounded.context.blog.domain.vo.BlogSeriesVO;
 import me.blog.backend.bounded.context.blog.port.in.service.BlogUseCase;
+import me.blog.backend.bounded.context.blog.port.in.service.SummaryUseCase;
 import me.blog.backend.bounded.context.blog.port.out.cache.BlogCachePort;
 import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
 import me.blog.backend.bounded.context.blog.port.out.cache.BlogSeriesCachePort;
@@ -25,34 +27,34 @@ public class BlogService implements BlogUseCase {
   private final BlogSeriesRepositoryPort blogSeriesRepository;
   private final BlogCachePort blogCache;
   private final BlogSeriesCachePort blogSeriesCache;
-  private final AiService aiService;
+  private final SummaryUseCase aiService;
 
   @Override
   @Transactional
   public BlogVO postBlog(String userId, String title, String content, String thumbnailUrl, String type){
-    if(type != null && !type.isEmpty()) {
-      return handleBlogByType(userId, title, content, thumbnailUrl, type);
-    }
+    // post with type
+    if(type != null && !type.isEmpty())
+      return postBlogWithType(userId, title, content, thumbnailUrl, type);
 
+    // post without type
     BlogEntity blog = new BlogEntity(userId, title, content, thumbnailUrl);
     return BlogVO.fromEntity(blogRepository.save(blog));
   }
 
-  private BlogVO handleBlogByType(String userId, String title, String content, String thumbnailUrl, String type) {
-    BlogEntity blog = blogCache.findByType(type)
-      .orElseGet(() -> blogRepository.findByType(type)
-        .orElseThrow(() -> new BlogNotFoundException(type))
-    );
-
-    return updateBlog(blog.getId(), userId, title, content, thumbnailUrl);
+  private BlogVO postBlogWithType(String userId, String title, String content, String thumbnailUrl, String type) {
+    return blogCache.findByType(type)
+        .map(BlogVO::id)  // blogId from cache
+        .or(() -> blogRepository.findByType(type).map(BlogEntity::getId)) // blogId from db
+        .map(id -> updateBlog(id, userId, title, content, thumbnailUrl))
+        .orElseThrow(() -> new BlogNotFoundException(type));
   }
+
 
   @Override
   @Transactional
   public BlogVO updateBlog(Long id,String userId, String newTitle, String newContent, String thumbNailUrl) {
     BlogEntity blogEntity = blogRepository.findById(id)
-      .orElseThrow(() -> new BlogNotFoundException("Blog with ID %s not found".formatted(id))
-    );
+      .orElseThrow(() -> new BlogNotFoundException("Blog with ID %s not found".formatted(id)));
 
     blogEntity.setAuthor(userId);
     blogEntity.setTitle(newTitle);
@@ -70,8 +72,7 @@ public class BlogService implements BlogUseCase {
   @Transactional
   public BlogVO updateBlogContent(Long id, String newContent) {
     BlogEntity blogEntity = blogRepository.findById(id)
-      .orElseThrow(() -> new BlogNotFoundException("Blog with ID %s not found".formatted(id))
-    );
+      .orElseThrow(() -> new BlogNotFoundException("Blog with ID %s not found".formatted(id)));
 
     blogEntity.setContent(newContent);
     BlogEntity savedEntity = blogRepository.save(blogEntity);
@@ -84,50 +85,49 @@ public class BlogService implements BlogUseCase {
   @Override
   @Transactional(readOnly = true)
   public List<BlogVO> getAllBlogs() {
-    List<BlogEntity> cachedBlogs = blogCache.findAll();
-    List<BlogEntity> blogs = cachedBlogs.isEmpty()
-            ? blogRepository.findAll()
-            : cachedBlogs;
-
-    return blogs.stream()
-            .filter(BlogEntity::isPublished)
-            .map(BlogVO::fromEntity)
-            .collect(Collectors.toList());
+    List<BlogVO> cachedBlogs = blogCache.findAll();
+    return cachedBlogs.isEmpty()
+        // from db
+        ? blogRepository.findAll().stream()
+        .filter(BlogEntity::isPublished)
+        .map(BlogVO::fromEntity)
+        .toList()
+        // from cache
+        : cachedBlogs.stream()
+        .filter(blog -> blog.publishedAt() != null)
+        .toList();
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<BlogVO> getAllBlogsByUser(String userId) {
-    List<BlogEntity> cachedBlogs = blogCache.findByAuthor(userId);
-    List<BlogEntity> blogs = cachedBlogs.isEmpty()
-            ? blogRepository.findByAuthor(userId)
-            : cachedBlogs;
-
-    return blogs.stream()
-            .map(BlogVO::fromEntity)
-            .collect(Collectors.toList());
+    List<BlogVO> cachedBlogs = blogCache.findByAuthor(userId);
+    return cachedBlogs.isEmpty()
+        // from db
+        ? blogRepository.findByAuthor(userId).stream()
+        .map(BlogVO::fromEntity)
+        .collect(Collectors.toList())
+        // from cache
+        : cachedBlogs;
   }
 
   @Override
   @Transactional
   public BlogVO getBlogById(Long id) {
-    BlogEntity blogEntity = blogCache.findById(id)
-      .orElseGet(() -> blogRepository.findById(id)
-        .orElseThrow(() -> new BlogNotFoundException("Blog with ID %s not found".formatted(id)))
-      );
-
-    if(blogEntity.isPublished()) {
-      blogEntity.readCounting();
-    }
-    return BlogVO.fromEntity(blogEntity);
+    return blogCache.findById(id)
+        .orElseGet(() -> BlogVO.fromEntity(blogRepository.findById(id)
+        .orElseThrow(() -> new BlogNotFoundException("Blog with ID %s not found".formatted(id)))));
   }
 
   @Override
   @Transactional(readOnly = true)
   public BlogVO getBlogByType(String type) {
-    BlogEntity blog= blogCache.findByType(type).orElseGet(
-      () -> blogRepository.findByType(type)
-        .orElse(new BlogEntity("","","""
+    //from cache
+    return blogCache.findByType(type).orElseGet(() ->
+        // from db
+        BlogVO.fromEntity(blogRepository.findByType(type).orElse((
+          // default data
+          new BlogEntity("","","""
           {
             "blocks": [
               {
@@ -140,32 +140,26 @@ public class BlogService implements BlogUseCase {
             ],
             "version": ""
           }
-          """
-        ))
+          """))))
     );
-
-    return BlogVO.fromEntity(blog);
   }
 
   @Override
   @Transactional(readOnly = true)
   public Map<String, List<BlogVO>> getBlogGroupBySeries(){
     Map<String, List<BlogVO>> result = new HashMap<>();
-    List<BlogSeriesEntity> series = blogSeriesCache.findAll();
-    List<BlogSeriesEntity> blogSeriesEntityList = series.isEmpty()
-            ? blogSeriesRepository.findAll()
-            : series;
+    List<BlogSeriesVO> cachedSeries = blogSeriesCache.findAll().stream()
+        .sorted(Comparator.comparing(BlogSeriesVO::id)).toList();
 
-    blogSeriesEntityList = blogSeriesEntityList.stream()
-            .sorted(Comparator.comparing(BlogSeriesEntity::getId)).toList();
-
-    for (BlogSeriesEntity blogSeriesEntity : blogSeriesEntityList) {
-      String key = blogSeriesEntity.getSeries().getName();
-      BlogVO blogVO = BlogVO.fromEntity(blogSeriesEntity.getBlog());
-      result.putIfAbsent(key, new ArrayList<>());
-      result.get(key).add(blogVO);
+    if(cachedSeries.isEmpty()){
+      List<BlogSeriesEntity> list = blogSeriesRepository.findAll();
+      for(BlogSeriesEntity blog : list){
+        cachedSeries.add(BlogSeriesVO.fromEntity(blog));
+      }
     }
-    return result;
+    return cachedSeries.stream()
+        .collect(Collectors.groupingBy(BlogSeriesVO::seriesName,
+            Collectors.mapping(BlogSeriesVO::blog, Collectors.toList())));
   }
 
   @Override

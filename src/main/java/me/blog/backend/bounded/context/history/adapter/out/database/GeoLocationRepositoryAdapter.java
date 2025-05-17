@@ -1,6 +1,5 @@
 package me.blog.backend.bounded.context.history.adapter.out.database;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.port.out.repository.BlogRepositoryPort;
@@ -20,7 +19,6 @@ import java.util.Optional;
 public class GeoLocationRepositoryAdapter implements GeoLocationRepositoryPort {
     private final GeoLocationRepository geoLocationRepository;
     private final BlogRepositoryPort blogRepository;
-    private final JPAQueryFactory queryFactory;
 
     @Override
     public long countByCreatedAtBetween(LocalDateTime from, LocalDateTime to) {

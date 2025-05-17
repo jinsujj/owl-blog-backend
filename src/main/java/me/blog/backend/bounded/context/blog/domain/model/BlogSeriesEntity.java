@@ -2,6 +2,8 @@ package me.blog.backend.bounded.context.blog.domain.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -40,10 +42,12 @@ public class BlogSeriesEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "blog_id", nullable = false)
+  @JsonBackReference("blog-series")
   private BlogEntity blog;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "series_id", nullable = false)
+  @JsonBackReference
   private SeriesEntity series;
 
   public BlogSeriesEntity(BlogEntity blog, SeriesEntity series) {

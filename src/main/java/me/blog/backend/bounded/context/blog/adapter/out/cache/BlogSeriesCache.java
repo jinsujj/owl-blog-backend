@@ -5,29 +5,50 @@ import me.blog.backend.bounded.context.blog.adapter.out.database.BlogSeriesRepos
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogSeriesEntity;
 import me.blog.backend.bounded.context.blog.domain.model.SeriesEntity;
+import me.blog.backend.bounded.context.blog.domain.vo.BlogSeriesVO;
 import me.blog.backend.bounded.context.blog.port.out.cache.BlogSeriesCachePort;
+
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class BlogSeriesCache extends AbstractCache<BlogSeriesEntity> implements BlogSeriesCachePort {
-    private final BlogSeriesRepositoryAdapter blogSeriesRepository;
+public class BlogSeriesCache extends RedisAbstractCache<BlogSeriesVO> implements BlogSeriesCachePort {
+  private final RedisTemplate<String, BlogSeriesVO> redisTemplate;
+  private final BlogSeriesRepositoryAdapter blogSeriesRepository;
 
-    public Optional<BlogSeriesEntity> findByBlogAndSeries(BlogEntity blog, SeriesEntity series) {
-        return immutableList.stream()
-                .filter(b -> b.getBlog().equals(blog) && b.getSeries().equals(series))
-                .findFirst();
-    }
+  @Override
+  protected RedisTemplate<String, BlogSeriesVO> redisTemplate() {
+    return redisTemplate;
+  }
 
-    @Transactional(readOnly = true)
-    @Override
-    public void putAll() {
-        List<BlogSeriesEntity> blogMaps = blogSeriesRepository.findAllWithRelationsForCache();
-        immutableList = List.copyOf(blogMaps);
-        isCached = true;
+  @Override
+  protected String getKeyPrefix() {
+    return "series";
+  }
+
+  @Override
+  protected String getListKey() {
+    return "series:all";
+  }
+
+  @Override
+  protected List<BlogSeriesVO> loadSource() {
+    List<BlogSeriesVO> result = new ArrayList<>();
+    List<BlogSeriesEntity> list = blogSeriesRepository.findAll();
+    for (BlogSeriesEntity entity : list) {
+      result.add(BlogSeriesVO.fromEntity(entity));
     }
+    return result;
+  }
+
+  @Override
+  protected Long getId(BlogSeriesVO item) {
+    return item.id();
+  }
 }

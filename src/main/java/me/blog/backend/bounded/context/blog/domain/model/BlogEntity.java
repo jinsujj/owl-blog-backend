@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,9 +35,11 @@ public class BlogEntity {
   private int readCount;
 
   @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference("blog-tags")
   private Set<BlogTagEntity> blogTags = new HashSet<>();
 
   @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference("blog-series")
   private List<BlogSeriesEntity> series = new ArrayList<>();
 
   @Lob

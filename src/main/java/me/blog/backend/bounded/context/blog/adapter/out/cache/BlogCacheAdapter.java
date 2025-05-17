@@ -3,62 +3,62 @@ package me.blog.backend.bounded.context.blog.adapter.out.cache;
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.adapter.out.database.BlogRepositoryAdapter;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
+import me.blog.backend.bounded.context.blog.domain.vo.BlogVO;
 import me.blog.backend.bounded.context.blog.port.out.cache.BlogCachePort;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class BlogCacheAdapter extends AbstractCache<BlogEntity> implements BlogCachePort {
+public class BlogCacheAdapter extends RedisAbstractCache<BlogVO> implements BlogCachePort {
+    private final RedisTemplate<String, BlogVO> redisTemplate;
     private final BlogRepositoryAdapter blogRepository;
-    private volatile List<BlogEntity> immutableList = List.of();
-    private volatile boolean isCached = false;
 
     @Override
-    public List<BlogEntity> findAll() {
-        return immutableList;
+    protected RedisTemplate<String, BlogVO> redisTemplate() {
+        return redisTemplate;
     }
 
     @Override
-    public List<BlogEntity> findByAuthor(String author) {
-        return immutableList.stream()
-                .filter(b -> b.getAuthor().equals(author))
-                .toList();
+    protected String getKeyPrefix() {
+        return "blog";
     }
 
     @Override
-    public Optional<BlogEntity> findById(Long id) {
-        return immutableList.stream()
-                .filter(b -> b.getId().equals(id))
-                .findFirst();
+    protected String getListKey() {
+        return "blog:all";
     }
 
     @Override
-    public Optional<BlogEntity> findByType(String type) {
-        return immutableList.stream()
-                .filter(b -> type != null && type.equals(b.getType()))
-                .findFirst();
+    protected List<BlogVO> loadSource() {
+        List<BlogEntity> list = blogRepository.findAllWithRelationsForCache();
+        List<BlogVO> result = new ArrayList<>();
+        for (BlogEntity blogEntity : list) {
+            result.add(BlogVO.fromEntity(blogEntity));
+        }
+        return result;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public void putAll() {
-        List<BlogEntity> blogList = blogRepository.findAllWithRelationsForCache();
-        immutableList = List.copyOf(blogList);
-        isCached = true;
+    protected Long getId(BlogVO item) {
+        return item.id();
     }
 
-    @Override
-    public boolean isCached() {
-        return isCached;
+    // custom method
+    public List<BlogVO> findByAuthor(String author) {
+        return findAll().stream()
+            .filter(blog -> blog.author().equals(author))
+            .toList();
     }
 
-    @Override
-    public void evictAll() {
-        immutableList = List.of();
-        isCached = false;
+    public Optional<BlogVO> findByType(String type) {
+        return findAll().stream()
+            .filter(blog -> blog.type().equals(type))
+            .findFirst();
     }
 }

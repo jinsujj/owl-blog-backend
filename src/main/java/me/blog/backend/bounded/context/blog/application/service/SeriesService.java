@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
+import me.blog.backend.bounded.context.blog.adapter.out.cache.BlogSeriesCache;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogSeriesEntity;
 import me.blog.backend.bounded.context.blog.port.in.service.SeriesUseCase;
@@ -23,6 +24,7 @@ public class SeriesService implements SeriesUseCase {
   private final SeriesRepositoryPort seriesRepository;
   private final BlogSeriesRepositoryPort blogSeriesRepository;
   private final BlogRepositoryPort blogRepository;
+  private final BlogSeriesCache seriesCache;
 
 
   @Override
@@ -45,6 +47,7 @@ public class SeriesService implements SeriesUseCase {
       return false;
 
     seriesRepository.save(new SeriesEntity(seriesName));
+    seriesCache.putAll();
     return true;
   }
 

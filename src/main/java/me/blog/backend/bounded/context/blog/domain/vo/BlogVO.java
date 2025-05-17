@@ -6,7 +6,7 @@ import java.util.Set;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogTagEntity;
 
-public record BlogVO(Long id, String author, String title, String content, String summary, int readCount, String thumbnailUrl, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime publishedAt, TagVO[] tags) {
+public record BlogVO(Long id, String author, String title, String content, String summary, String type, int readCount, String thumbnailUrl, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime publishedAt, TagVO[] tags) {
   public static BlogVO fromEntity(BlogEntity entity) {
     Set<BlogTagEntity> blogTags = entity.getBlogTags();
     return new BlogVO(
@@ -15,6 +15,7 @@ public record BlogVO(Long id, String author, String title, String content, Strin
             entity.getTitle(),
             entity.getContent(),
             entity.getSummary(),
+            entity.getType(),
             entity.getReadCount(),
             entity.getThumbnailUrl(),
             entity.getCreatedAt(),

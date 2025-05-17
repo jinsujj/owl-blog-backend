@@ -1,11 +1,11 @@
 spring:
+  profiles:
+    active: dev
   servlet:
     multipart:
       enabled: true
       max-file-size: 100MB
       max-request-size: 100MB
-  profiles:
-    active: local
   web:
     resources:
       static-locations: classpath:/static/, file:resources/uploads/
@@ -24,14 +24,19 @@ spring:
     console:
       enabled: true
   kafka:
-    bootstrap-servers:
+    bootstrap-servers: localhost
+  data:
+    redis:
+      host: localhost
+      port:
 
 server:
-    forward-headers-strategy: native
+  forward-headers-strategy: native
 
 jwt:
   secret:
   expiration: 86400000
+
 
 kakao:
   client-id:
@@ -39,12 +44,13 @@ kakao:
   redirect-uri: http://localhost:3000/
 
 file:
-  upload-dir: image
-  base-url: http://localhost:8080/images
+  upload-dir: images
+  base-url: https://backend.owl-dev.me/images
   s3-bucket: your-s3-bucket-name
   s3-base-url: https://your-s3-bucket-name.s3.amazonaws.com
   storage:
     type: local
+
 
 springdoc:
   swagger-ui:
