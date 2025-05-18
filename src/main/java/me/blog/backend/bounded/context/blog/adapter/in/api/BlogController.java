@@ -16,7 +16,6 @@ import me.blog.backend.bounded.context.blog.application.service.BlogService;
 import me.blog.backend.bounded.context.blog.domain.vo.BlogVO;
 import me.blog.backend.bounded.context.blog.domain.vo.TagVO;
 import me.blog.backend.bounded.context.blog.application.service.TagService;
-import me.blog.backend.bounded.context.history.application.service.GeolocationService;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +25,6 @@ public class BlogController {
   private final TagService tagService;
   private final KakaoAuthService authService;
   private final HttpServletRequest request;
-  private final GeolocationService geolocationService;
   private final CacheManagerAdapter cacheManager;
   private final BlogVisitorPublisherAdapter blogVisitorPublisherAdapter;
 
