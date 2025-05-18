@@ -31,7 +31,7 @@ public class SitemapController {
             sb.append("    <loc>").append("https://owl-dev.me/blog/").append(blog.id()).append("</loc>\n");
             sb.append("    <lastmod>").append(blog.updatedAt().toLocalDate()).append("</lastmod>\n");
 
-            if (blog.thumbnailUrl() != null) {
+            if (blog.thumbnailUrl() != null && !blog.thumbnailUrl().isEmpty()) {
                 sb.append("    <image:image>\n");
                 sb.append("      <image:loc>").append(blog.thumbnailUrl()).append("</image:loc>\n");
                 sb.append("      <image:title>").append(escapeXml(blog.title())).append("</image:title>\n");

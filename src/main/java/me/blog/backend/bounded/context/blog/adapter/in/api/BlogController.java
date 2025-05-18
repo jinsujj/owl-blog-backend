@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.adapter.in.batch.CacheManagerAdapter;
@@ -29,7 +30,13 @@ public class BlogController {
   private final BlogVisitorPublisherAdapter blogVisitorPublisherAdapter;
 
   @PostMapping
-  public ResponseEntity<BlogVO> postBlog(@RequestBody BlogRequest blogRequest) {
+  public ResponseEntity<BlogVO> postBlog(@Parameter(hidden = true) @CookieValue(value ="token", required = false) String token,
+                                         @RequestBody BlogRequest blogRequest) {
+
+    if(token == null || !authService.validateToken(token)){
+      return ResponseEntity.status(401).build();
+    }
+
     BlogVO blog = blogService.postBlog(blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl, blogRequest.type);
 
     if(blogRequest.tags != null)
@@ -39,7 +46,13 @@ public class BlogController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<BlogVO> updateBlog(@PathVariable Long id, @RequestBody BlogRequest blogRequest) {
+  public ResponseEntity<BlogVO> updateBlog(@Parameter(hidden = true) @CookieValue(value ="token", required = false) String token,
+                                           @PathVariable Long id, @RequestBody BlogRequest blogRequest) {
+
+    if(token == null || !authService.validateToken(token)){
+      return ResponseEntity.status(401).build();
+    }
+
     BlogVO updatedBlog = blogService.updateBlog(id, blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl);
 
     if(blogRequest.tags != null)
@@ -49,20 +62,38 @@ public class BlogController {
   }
 
   @PutMapping("/content/{id}")
-  public ResponseEntity<BlogVO> updateContentBlog(@PathVariable Long id, @RequestBody String content) {
+  public ResponseEntity<BlogVO> updateContentBlog(@Parameter(hidden = true) @CookieValue(value ="token", required = false) String token,
+                                                  @PathVariable Long id, @RequestBody String content) {
+
+    if(token == null || !authService.validateToken(token)){
+      return ResponseEntity.status(401).build();
+    }
+
     BlogVO updatedBlog = blogService.updateBlogContent(id, content);
 
     return ResponseEntity.ok(updatedBlog);
   }
 
   @PostMapping("/{id}/publish")
-  public ResponseEntity<BlogVO> publishBlog(@PathVariable Long id) {
+  public ResponseEntity<BlogVO> publishBlog(@Parameter(hidden = true) @CookieValue(value ="token", required = false) String token,
+                                            @PathVariable Long id) {
+
+    if(token == null || !authService.validateToken(token)){
+      return ResponseEntity.status(401).build();
+    }
+
     BlogVO blog = blogService.publishBlog(id);
     return ResponseEntity.ok(blog);
   }
 
   @PostMapping("/{id}/unpublish")
-  public ResponseEntity<BlogVO> unpublishBlog(@PathVariable Long id) {
+  public ResponseEntity<BlogVO> unpublishBlog(@Parameter(hidden = true) @CookieValue(value ="token", required = false) String token,
+                                              @PathVariable Long id) {
+
+    if(token == null || !authService.validateToken(token)){
+      return ResponseEntity.status(401).build();
+    }
+
     BlogVO blog = blogService.unPublishBlog(id);
     return ResponseEntity.ok(blog);
   }

@@ -12,7 +12,9 @@ public class CorsConfiguration implements WebMvcConfigurer {
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
         .allowedOrigins("http://localhost:3000",
+                "https://localhost:3030",
                 "http://localhost:8080",
+                "https://localhost:8081",
                 "https://owl-dev.me",
                 "https://www.owl-dev.me",
                 "https://backend.owl-dev.me")

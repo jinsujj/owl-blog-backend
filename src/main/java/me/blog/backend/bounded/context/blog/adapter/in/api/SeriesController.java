@@ -1,25 +1,22 @@
 package me.blog.backend.bounded.context.blog.adapter.in.api;
 
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
+import me.blog.backend.bounded.context.auth.application.service.KakaoAuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import me.blog.backend.bounded.context.blog.application.service.SeriesService;
 import me.blog.backend.bounded.context.blog.domain.vo.SeriesVO;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/series")
 public class SeriesController {
   private final SeriesService seriesService;
-
-  public SeriesController(SeriesService seriesService) {
-    this.seriesService = seriesService;
-  }
+  private final KakaoAuthService authService;
 
   @GetMapping("/")
   public ResponseEntity<List<SeriesVO>> getSeries() {
@@ -27,17 +24,38 @@ public class SeriesController {
   }
 
   @PostMapping("/{seriesName}")
-  public ResponseEntity<Boolean> createSeries(@PathVariable String seriesName) {
+  public ResponseEntity<Boolean> createSeries(
+          @Parameter(hidden = true)
+          @CookieValue(value ="token", required = false) String token,
+          @PathVariable String seriesName) {
+
+    if(token == null || !authService.validateToken(token)){
+      return ResponseEntity.status(401).build();
+    }
     return ResponseEntity.ok(seriesService.createSeries(seriesName));
   }
 
-  @DeleteMapping("/")
-  public ResponseEntity<Boolean> deleteSeries(@PathVariable String seriesName) {
+  @DeleteMapping("/{seriesName}")
+  public ResponseEntity<Boolean> deleteSeries(
+          @Parameter(hidden = true)
+          @CookieValue(value ="token", required = false) String token,
+          @PathVariable String seriesName) {
+
+    if(token == null || !authService.validateToken(token)){
+      return ResponseEntity.status(401).build();
+    }
+
     return ResponseEntity.ok(seriesService.removeSeries(seriesName));
   }
 
   @PostMapping("/{seriesName}/blog/{blogId}")
-  public ResponseEntity<Boolean> addBlogToSeries(@PathVariable String seriesName, @PathVariable String blogId) {
+  public ResponseEntity<Boolean> addBlogToSeries(
+          @CookieValue(value ="token", required = false) String token,
+          @PathVariable String seriesName, @PathVariable String blogId) {
+
+    if(token == null || !authService.validateToken(token)){
+      return ResponseEntity.status(401).build();
+    }
     return ResponseEntity.ok(seriesService.addBlogToSeries(blogId, seriesName));
   }
 

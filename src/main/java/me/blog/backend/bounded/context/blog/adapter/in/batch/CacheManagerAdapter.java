@@ -15,7 +15,6 @@ public class CacheManagerAdapter {
 
     public CacheManagerAdapter(List<RedisAbstractCache<?>> caches) {
         this.caches = caches;
-        refreshAllCaches();
     }
 
     @Scheduled(cron = "0 0 1 * * *")
