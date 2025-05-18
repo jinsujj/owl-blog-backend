@@ -58,3 +58,5 @@ build/
 *.log
 .DS_Store
 node_modules/
+
+application_bk.yml
