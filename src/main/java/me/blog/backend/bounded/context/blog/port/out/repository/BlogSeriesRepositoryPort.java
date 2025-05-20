@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface BlogSeriesRepositoryPort {
     Optional<BlogSeriesEntity> findByBlogAndSeries(BlogEntity blog, SeriesEntity series);
+    List<BlogSeriesEntity> findBySeries(SeriesEntity series);
     List<BlogSeriesEntity> findAllWithRelationsForCache();
     List<BlogSeriesEntity> findAll();
+    void deleteAllBySeries(SeriesEntity series);
     BlogSeriesEntity save(BlogSeriesEntity entity);
 }

@@ -22,6 +22,11 @@ public class BlogSeriesRepositoryAdapter implements BlogSeriesRepositoryPort {
     }
 
     @Override
+    public List<BlogSeriesEntity> findBySeries(SeriesEntity series) {
+        return blogSeriesRepository.findBySeries(series);
+    }
+
+    @Override
     public List<BlogSeriesEntity> findAllWithRelationsForCache() {
         return blogSeriesRepository.findAllWithRelationsForCache();
     }
@@ -29,6 +34,11 @@ public class BlogSeriesRepositoryAdapter implements BlogSeriesRepositoryPort {
     @Override
     public List<BlogSeriesEntity> findAll() {
         return blogSeriesRepository.findAll();
+    }
+
+    @Override
+    public void deleteAllBySeries(SeriesEntity series) {
+        blogSeriesRepository.deleteAllBySeries(series);
     }
 
     @Override

@@ -58,7 +58,9 @@ public class SeriesService implements SeriesUseCase {
     if(!series.isPresent())
       return false;
 
-    seriesRepository.delete(series.get());
+    SeriesEntity foundSeries = series.get();
+    blogSeriesRepository.deleteAllBySeries(foundSeries);
+    seriesRepository.delete(foundSeries);
     return true;
   }
 
