@@ -38,6 +38,8 @@ public class BlogService implements BlogUseCase {
 
     // post without type
     BlogEntity blog = new BlogEntity(userId, title, content, thumbnailUrl);
+    blogCache.putAll();
+    
     return BlogVO.fromEntity(blogRepository.save(blog));
   }
 
