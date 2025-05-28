@@ -9,8 +9,9 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 
 @Configuration
 @EnableSchedulerLock(
-        defaultLockAtMostFor = "PT10S",   // 전역 10초 설정
-        defaultLockAtLeastFor = "PT10S"
+    defaultLockAtMostFor = "PT10M",
+    defaultLockAtLeastFor = "PT1M",
+    interceptMode = EnableSchedulerLock.InterceptMode.PROXY_SCHEDULER
 )
 public class SchedulerLockConfig {
     @Bean
