@@ -147,12 +147,13 @@ public class BlogController {
             ? ipAddress.split(",")[0].trim()
             : remoteAddr;
 
-    System.out.printf(
-            "[Visitor IP] X-Forwarded-For: %s | RemoteAddr: %s | FinalClientIp: %s%n",
-            ipAddress, remoteAddr, clientIp
-    );
+    System.out.printf("[Visitor IP] X-Forwarded-For: %s | RemoteAddr: %s | FinalClientIp: %s%n", ipAddress, remoteAddr, clientIp);
 
-    blogVisitorPublisherAdapter.publish(clientIp, blogId);
+    try {
+        blogVisitorPublisherAdapter.publish(clientIp, blogId);
+    } catch (Exception e) {
+        System.err.printf("[Visitor IP] 기록 실패: %s%n", e.getMessage());
+    }
   }
 
 

@@ -1,6 +1,5 @@
 package me.blog.backend.bounded.context.blog.port.out.cache;
 
-import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.vo.BlogVO;
 
 import java.util.List;

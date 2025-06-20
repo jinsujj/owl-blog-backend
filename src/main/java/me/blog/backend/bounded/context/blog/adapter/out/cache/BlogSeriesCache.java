@@ -2,19 +2,15 @@ package me.blog.backend.bounded.context.blog.adapter.out.cache;
 
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.blog.adapter.out.database.BlogSeriesRepositoryAdapter;
-import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogSeriesEntity;
-import me.blog.backend.bounded.context.blog.domain.model.SeriesEntity;
 import me.blog.backend.bounded.context.blog.domain.vo.BlogSeriesVO;
 import me.blog.backend.bounded.context.blog.port.out.cache.BlogSeriesCachePort;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.List;  
 
 @Component
 @RequiredArgsConstructor

@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.domain.model.BlogSeriesEntity;
 import me.blog.backend.bounded.context.blog.domain.vo.BlogSeriesVO;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import me.blog.backend.common.exception.BlogNotFoundException;
 import me.blog.backend.bounded.context.blog.domain.vo.BlogVO;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BlogService implements BlogUseCase {
@@ -38,7 +40,7 @@ public class BlogService implements BlogUseCase {
 
     // post without type
     BlogEntity blog = new BlogEntity(userId, title, content, thumbnailUrl);
-    blogCache.putAll();
+    refreshCache();
     
     return BlogVO.fromEntity(blogRepository.save(blog));
   }
@@ -54,7 +56,7 @@ public class BlogService implements BlogUseCase {
 
   @Override
   @Transactional
-  public BlogVO updateBlog(Long id,String userId, String newTitle, String newContent, String thumbNailUrl) {
+  public BlogVO updateBlog(Long id, String userId, String newTitle, String newContent, String thumbNailUrl) {
     BlogEntity blogEntity = blogRepository.findById(id)
       .orElseThrow(() -> new BlogNotFoundException("Blog with ID %s not found".formatted(id)));
 
@@ -65,7 +67,8 @@ public class BlogService implements BlogUseCase {
     blogEntity.upLoadThumbnailUrl(thumbNailUrl);
 
     BlogEntity savedEntity = blogRepository.save(blogEntity);
-    blogCache.putAll();
+
+    refreshCache();
 
     return BlogVO.fromEntity(savedEntity);
   }
@@ -78,8 +81,9 @@ public class BlogService implements BlogUseCase {
 
     blogEntity.setContent(newContent);
     BlogEntity savedEntity = blogRepository.save(blogEntity);
-    blogCache.putAll();
-    aiService.publishSummary(id);
+
+    refreshCache();
+    queueAiSummary(id);
 
     return BlogVO.fromEntity(savedEntity);
   }
@@ -171,8 +175,9 @@ public class BlogService implements BlogUseCase {
        .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
 
    blog.publish();
-   blogCache.putAll();
-   aiService.publishSummary(id);
+   
+   refreshCache();
+   queueAiSummary(id);
 
    return BlogVO.fromEntity(blog);
   }
@@ -184,7 +189,25 @@ public class BlogService implements BlogUseCase {
        .orElseThrow(() -> new BlogNotFoundException(String.format("Blog with ID %s not found", id)));
 
    blog.unpublish();
-   blogCache.putAll();
+   refreshCache();
+
    return BlogVO.fromEntity(blog);
+  }
+
+  // protect third party service error to service error
+  private void refreshCache() {
+    try {
+      blogCache.putAll();
+    } catch (Exception e) {
+      log.error("Failed to refresh cache: {}", e.getMessage());
+    }
+  }
+
+  private void queueAiSummary(Long id) {
+    try{
+      aiService.publishSummary(id);
+    } catch (Exception e) {
+      log.error("Failed to queue AI summary: {}", e.getMessage());
+    }
   }
 }
