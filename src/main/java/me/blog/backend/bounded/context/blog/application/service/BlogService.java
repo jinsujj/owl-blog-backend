@@ -34,15 +34,13 @@ public class BlogService implements BlogUseCase {
   @Override
   @Transactional
   public BlogVO postBlog(String userId, String title, String content, String thumbnailUrl, String type){
-    // post with type
     if(type != null && !type.isEmpty())
       return postBlogWithType(userId, title, content, thumbnailUrl, type);
 
-    // post without type
     BlogEntity blog = new BlogEntity(userId, title, content, thumbnailUrl);
+    BlogEntity savedBlog = blogRepository.save(blog);
     refreshCache();
-    
-    return BlogVO.fromEntity(blogRepository.save(blog));
+    return BlogVO.fromEntity(savedBlog);
   }
 
   private BlogVO postBlogWithType(String userId, String title, String content, String thumbnailUrl, String type) {
