@@ -21,9 +21,8 @@ public class BlogSummaryPublisherAdapter implements BlogSummaryPublisherPort {
             String json = objectMapper.writeValueAsString(event);
             kafkaTemplate.send("summary-request", json);
             log.info("Published blog created event: {}", event);
-        }
-        catch(Exception e){
-            log.error("kafka publish error", e);
+        } catch(Exception e){
+            log.error("Failed to publish summary-request event", e);
         }
     }
 }

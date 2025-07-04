@@ -36,7 +36,7 @@ public class BlogVisitorPublisherAdapter implements BlogVisitorPublisherPort {
             log.info("Published ip-history created event: {}", message);
 
         } catch (Exception e) {
-            log.error("Kafka 메시지 직렬화 실패: " ,e);
+            log.error("Failed to publish ip-history event", e);
         }
     }
 }
