@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +27,11 @@ public abstract class RedisAbstractCache<T>{
                 return List.of();
 
             return rawList;
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException e) {
             log.warn("Redis connection failed while fetching {} list", getKeyPrefix(), e);
+            return List.of();
+        } catch (Exception e) {
+            log.error("Unexpected error while fetching {} list", getKeyPrefix(), e);
             return List.of();
         }
     }
@@ -36,8 +40,11 @@ public abstract class RedisAbstractCache<T>{
         try {
             T value = redisTemplate().opsForValue().get(getKeyPrefix() + ":" + id);
             return Optional.ofNullable(value);
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException e) {
             log.warn("Redis connection failed while fetching {}:{}", getKeyPrefix(), id, e);
+            return Optional.empty();
+        } catch (Exception e) {
+            log.error("Unexpected error while fetching {}:{}", getKeyPrefix(), id, e);
             return Optional.empty();
         }
     }
@@ -61,8 +68,10 @@ public abstract class RedisAbstractCache<T>{
                 redisTemplate().opsForValue().set(key, item);
                 redisTemplate().opsForList().rightPush(getKeyPrefix()+":all", item);
             });
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException e) {
             log.warn("Redis connection failed while updating {} cache", getKeyPrefix(), e);
+        } catch (Exception e) {
+            log.error("Unexpected error while updating {} cache", getKeyPrefix(), e);
         }
     }
 }
