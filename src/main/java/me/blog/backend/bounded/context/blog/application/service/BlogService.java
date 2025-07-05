@@ -151,7 +151,6 @@ public class BlogService implements BlogUseCase {
   @Override
   @Transactional(readOnly = true)
   public Map<String, List<BlogVO>> getBlogGroupBySeries(){
-    Map<String, List<BlogVO>> result = new HashMap<>();
     List<BlogSeriesVO> cachedSeries = blogSeriesCache.findAll().stream()
         .sorted(Comparator.comparing(BlogSeriesVO::id)).toList();
 
