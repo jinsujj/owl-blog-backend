@@ -29,6 +29,7 @@ spring:
     redis:
       host: localhost
       port:
+      timeout: 300ms
 
 server:
   forward-headers-strategy: native
