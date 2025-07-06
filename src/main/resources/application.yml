@@ -37,6 +37,10 @@ management:
     web:
       exposure:
         include: prometheus,health,info
+  metrics:
+    tags:
+      region: seoul   
+
 
 server:
   forward-headers-strategy: native
