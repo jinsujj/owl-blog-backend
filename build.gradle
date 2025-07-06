@@ -76,6 +76,9 @@ dependencies {
     implementation 'net.javacrumbs.shedlock:shedlock-spring:5.15.0'
     // ShedLock - Redis
     implementation 'net.javacrumbs.shedlock:shedlock-provider-redis-spring:5.15.0'
+    // Monitoring
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {

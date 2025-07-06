@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.blog.backend.bounded.context.blog.adapter.out.database.BlogRepository;
-import me.blog.backend.bounded.context.blog.domain.model.BlogEntity;
 import me.blog.backend.bounded.context.blog.port.in.message.BlogVisitorConsumerPort;
 import me.blog.backend.bounded.context.history.application.service.GeolocationService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 @Slf4j
 @Component

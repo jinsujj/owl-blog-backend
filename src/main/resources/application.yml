@@ -31,6 +31,13 @@ spring:
       port:
       timeout: 300ms
 
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info
+
 server:
   forward-headers-strategy: native
 
