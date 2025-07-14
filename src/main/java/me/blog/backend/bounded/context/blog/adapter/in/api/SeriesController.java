@@ -5,9 +5,11 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import me.blog.backend.bounded.context.auth.application.service.KakaoAuthService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import me.blog.backend.bounded.context.blog.adapter.in.batch.CacheManagerAdapter;
 import me.blog.backend.bounded.context.blog.application.service.SeriesService;
 import me.blog.backend.bounded.context.blog.domain.vo.SeriesVO;
 
@@ -17,6 +19,7 @@ import me.blog.backend.bounded.context.blog.domain.vo.SeriesVO;
 public class SeriesController {
   private final SeriesService seriesService;
   private final KakaoAuthService authService;
+  private final CacheManagerAdapter cacheManager;
 
   @GetMapping("/")
   public ResponseEntity<List<SeriesVO>> getSeries() {
@@ -32,6 +35,7 @@ public class SeriesController {
     if(token == null || !authService.validateToken(token)){
       return ResponseEntity.status(401).build();
     }
+    cacheManager.refreshAllCaches();
     return ResponseEntity.ok(seriesService.createSeries(seriesName));
   }
 
@@ -44,7 +48,7 @@ public class SeriesController {
     if(token == null || !authService.validateToken(token)){
       return ResponseEntity.status(401).build();
     }
-
+    cacheManager.refreshAllCaches();
     return ResponseEntity.ok(seriesService.removeSeries(seriesName));
   }
 
@@ -56,6 +60,7 @@ public class SeriesController {
     if(token == null || !authService.validateToken(token)){
       return ResponseEntity.status(401).build();
     }
+    cacheManager.refreshAllCaches();
     return ResponseEntity.ok(seriesService.addBlogToSeries(blogId, seriesName));
   }
 
