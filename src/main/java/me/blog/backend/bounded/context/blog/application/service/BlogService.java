@@ -152,6 +152,7 @@ public class BlogService implements BlogUseCase {
   @Transactional(readOnly = true)
   public Map<String, List<BlogVO>> getBlogGroupBySeries(){
     List<BlogSeriesVO> cachedSeries = new ArrayList<>(blogSeriesCache.findAll());
+
     if (cachedSeries.isEmpty()) {
         List<BlogSeriesEntity> list = blogSeriesRepository.findAll();
         for (BlogSeriesEntity blog : list) {
@@ -161,6 +162,7 @@ public class BlogService implements BlogUseCase {
     } else {
         cachedSeries.sort(Comparator.comparing(BlogSeriesVO::id));
     }
+    
     return cachedSeries.stream()
         .collect(Collectors.groupingBy(BlogSeriesVO::seriesName,
             Collectors.mapping(BlogSeriesVO::blog, Collectors.toList())));
