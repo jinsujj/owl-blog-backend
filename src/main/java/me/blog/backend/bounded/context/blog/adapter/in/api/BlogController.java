@@ -39,8 +39,10 @@ public class BlogController {
 
     BlogVO blog = blogService.postBlog(blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl, blogRequest.type);
 
-    if(blogRequest.tags != null)
+    if(blogRequest.tags != null){
       tagService.postTags(blogRequest.tags, blog.id());
+      cacheManager.refreshAllCaches();
+    }
 
     return ResponseEntity.ok(blog);
   }
@@ -55,8 +57,10 @@ public class BlogController {
 
     BlogVO updatedBlog = blogService.updateBlog(id, blogRequest.userId, blogRequest.title, blogRequest.content, blogRequest.thumbnailUrl);
 
-    if(blogRequest.tags != null)
+    if(blogRequest.tags != null){
       tagService.updateTags(blogRequest.tags, id);
+      cacheManager.refreshAllCaches();
+    }
 
     return ResponseEntity.ok(updatedBlog);
   }
