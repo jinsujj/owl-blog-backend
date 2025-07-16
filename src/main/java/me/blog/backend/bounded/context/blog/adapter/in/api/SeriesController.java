@@ -35,8 +35,10 @@ public class SeriesController {
     if(token == null || !authService.validateToken(token)){
       return ResponseEntity.status(401).build();
     }
+    Boolean result = seriesService.createSeries(seriesName);
     cacheManager.refreshAllCaches();
-    return ResponseEntity.ok(seriesService.createSeries(seriesName));
+
+    return ResponseEntity.ok(result);
   }
 
   @DeleteMapping("/{seriesName}")
@@ -48,8 +50,10 @@ public class SeriesController {
     if(token == null || !authService.validateToken(token)){
       return ResponseEntity.status(401).build();
     }
+    Boolean result = seriesService.removeSeries(seriesName);
     cacheManager.refreshAllCaches();
-    return ResponseEntity.ok(seriesService.removeSeries(seriesName));
+
+    return ResponseEntity.ok(result);
   }
 
   @PostMapping("/{seriesName}/blog/{blogId}")
@@ -60,8 +64,9 @@ public class SeriesController {
     if(token == null || !authService.validateToken(token)){
       return ResponseEntity.status(401).build();
     }
+    Boolean result = seriesService.addBlogToSeries(blogId, seriesName);
     cacheManager.refreshAllCaches();
-    return ResponseEntity.ok(seriesService.addBlogToSeries(blogId, seriesName));
+    return ResponseEntity.ok(result);
   }
 
 }
