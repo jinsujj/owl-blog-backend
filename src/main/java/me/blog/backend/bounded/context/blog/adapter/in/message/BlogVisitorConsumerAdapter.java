@@ -37,7 +37,12 @@ public class BlogVisitorConsumerAdapter implements BlogVisitorConsumerPort {
             if(ipAddress != null && ipAddress.startsWith("192")) return;
             log.info("Received IP visit: ipAddress={}, timestamp={}", ipAddress, createdTime);
 
-            geolocationService.saveIPInformation(ipAddress, blogId, createdTime);
+            try {
+                geolocationService.saveIPInformation(ipAddress, blogId, createdTime);
+            } catch (Exception uniqueEx) {
+                log.warn("Duplicate geo-location entry ignored: ip={}, blogId={}, createdAt={}", ipAddress, blogId,createdTime);
+            }
+    
             blogRepository.findById(blogId).ifPresent(s-> {
                 if(s.isPublished()) s.readCounting();
             });

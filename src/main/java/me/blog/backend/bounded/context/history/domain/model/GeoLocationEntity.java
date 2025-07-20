@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name ="geo_location")
+@Table(name = "geo_location", uniqueConstraints = {
+    @UniqueConstraint(name = "uq_query_created_blog", columnNames = { "query", "created_at", "blog_id" })
+})
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
