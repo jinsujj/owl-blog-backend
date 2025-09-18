@@ -24,7 +24,21 @@ spring:
     console:
       enabled: true
   kafka:
-    bootstrap-servers: localhost
+    bootstrap-servers: 110.8.21.243:9092
+    listener:
+      missing-topics-fatal: false
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      properties:
+        max.block.ms: 500
+        request.timeout.ms: 300
+        delivery.timeout.ms: 3000
+        enable.idempotence: true
+        reetries: 3
+        retry.backoff.ms: 100
+        linger.ms: 5
   data:
     redis:
       host: localhost
