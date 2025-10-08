@@ -119,8 +119,8 @@ public class BlogService implements BlogUseCase {
   @Transactional(readOnly = true)
   public Optional<BlogVO> getBlogById(Long id) {
     return blogCache.findById(id).or(
-      () -> blogRepository.findById(id).map(BlogVO::fromEntity) 
-    )
+      () -> blogRepository.findById(id).map(BlogVO::fromEntity)
+    );
   }
 
   @Override
