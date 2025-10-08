@@ -4,6 +4,7 @@ import me.blog.backend.bounded.context.blog.domain.vo.BlogVO;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface BlogUseCase {
     BlogVO postBlog(String userId, String title, String content, String thumbnailUrl, String type);
@@ -15,7 +16,7 @@ public interface BlogUseCase {
     List<BlogVO> getAllBlogs();
     List<BlogVO> getAllBlogsByUser(String userId);
     BlogVO getBlogByType(String type);
-    BlogVO getBlogById(Long id);
+    Optional<BlogVO> getBlogById(Long id);
     Map<String, List<BlogVO>> getBlogGroupBySeries();
 }
 

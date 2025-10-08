@@ -116,11 +116,11 @@ public class BlogService implements BlogUseCase {
   }
 
   @Override
-  @Transactional
-  public BlogVO getBlogById(Long id) {
-    return blogCache.findById(id)
-        .orElseGet(() -> BlogVO.fromEntity(blogRepository.findById(id)
-        .orElseThrow(() -> new BlogNotFoundException("Blog with ID %s not found".formatted(id)))));
+  @Transactional(readOnly = true)
+  public Optional<BlogVO> getBlogById(Long id) {
+    return blogCache.findById(id).or(
+      () -> blogRepository.findById(id).map(BlogVO::fromEntity) 
+    )
   }
 
   @Override

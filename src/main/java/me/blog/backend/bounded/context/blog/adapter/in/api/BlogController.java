@@ -141,7 +141,8 @@ public class BlogController {
   @GetMapping("/{id}")
   public ResponseEntity<BlogVO> getBlogById(@PathVariable Long id) {
     saveVisitorIpHistory(String.valueOf(id));
-    return ResponseEntity.ok(blogService.getBlogById(id));
+    var blog = blogService.getBlogById(id);
+    return ResponseEntity.of(blog);
   }
 
   private void saveVisitorIpHistory(String blogId) {
